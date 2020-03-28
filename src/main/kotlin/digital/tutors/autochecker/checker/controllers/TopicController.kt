@@ -2,6 +2,7 @@ package digital.tutors.autochecker.checker.controllers
 
 import digital.tutors.autochecker.checker.services.TopicService
 import digital.tutors.autochecker.checker.vo.topic.TopicCreateRq
+import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
 import digital.tutors.autochecker.core.controller.BaseController
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
@@ -44,6 +45,19 @@ class TopicController : BaseController() {
     @PostMapping("/topic")
     fun createTopic(@RequestBody topicCreateRq: TopicCreateRq): ResponseEntity<TopicVO> = processServiceExceptions {
         ResponseEntity.ok(topicService.createTopic(topicCreateRq))
+    }
+
+    @PutMapping("/topic/{id}")
+    fun updateTopic(
+            @PathVariable id: String,
+            @RequestBody topicUpdateRq: TopicUpdateRq
+    ): ResponseEntity<TopicVO> = processServiceExceptions {
+        ResponseEntity.ok(topicService.updateTopic(id, topicUpdateRq))
+    }
+
+    @DeleteMapping("/topic/{id}")
+    fun deleteAdvantage(@PathVariable id: String): ResponseEntity<*> = processServiceExceptions {
+        ResponseEntity.ok(topicService.delete(id))
     }
 
 }
