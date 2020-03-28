@@ -2,11 +2,12 @@ package digital.tutors.autochecker.checker.services.impl
 
 import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
-import digital.tutors.autochecker.auth.vo.UserVO
 import digital.tutors.autochecker.checker.entities.Topic
 import digital.tutors.autochecker.checker.repositories.TopicRepository
 import digital.tutors.autochecker.checker.services.TopicService
-import digital.tutors.autochecker.checker.vo.TopicVO
+import digital.tutors.autochecker.checker.vo.topic.TopicCreateRq
+import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq
+import digital.tutors.autochecker.checker.vo.topic.TopicVO
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,15 +29,36 @@ class TopicServiceImpl : TopicService {
     @Throws(EntityNotFoundException::class)
     override fun getTopics(pageable: Pageable): Page<TopicVO> = topicRepository.findAll(pageable).map(::toTopicVO)
 
-    override fun createTopic(topic: Topic): TopicVO {
-        val id = topicRepository.save(topic).id ?: throw IllegalArgumentException("Bad id returned.")
+    override fun createTopic(topicCreateRq: TopicCreateRq): TopicVO {
+        val id = topicRepository.save(Topic().apply {
+            title = topicCreateRq.title
+            accessType = topicCreateRq.accessType
+            followers = topicCreateRq.followers?.map { User(id = it.id) }
+            authorId = User(id = topicCreateRq.authorId?.id)
+            contributors = topicCreateRq.contributors?.map { User(id = it.id) }
+        }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Created entity $id")
         return getTopicByIdOrThrow(id)
     }
 
+    @Throws(EntityNotFoundException::class)
+    override fun updateTopic(id: String, topicUpdateRq: TopicUpdateRq): TopicVO {
+        topicRepository.save(topicRepository.findById(id).get().apply {
+            title = topicUpdateRq.title
+            accessType = topicUpdateRq.accessType
+            followers = topicUpdateRq.followers?.map { User(id = it.id) }
+            contributors = topicUpdateRq.contributors?.map { User(id = it.id) }
+        }).id
+
+        log.debug("Updated entity $id")
+        return getTopicByIdOrThrow(id)
+    }
+
+    @Throws(EntityNotFoundException::class)
     override fun delete(id: String) {
-        TODO("Not yet implemented")
+        topicRepository.deleteById(id)
+        log.debug("Deleted advantage $id")
     }
 
     private fun toTopicVO(topic: Topic): TopicVO {

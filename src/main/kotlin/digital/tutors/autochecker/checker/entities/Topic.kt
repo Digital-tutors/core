@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class Topic(
         @Id var id: String? = null,
         var title: String? = null,
-        var accessType: AccessType = AccessType.PRIVATE,
+        var accessType: AccessType? = AccessType.PRIVATE,
 
         @DBRef
         var followers: List<User>? = null,
