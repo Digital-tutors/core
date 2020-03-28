@@ -12,14 +12,14 @@ data class UserVO(
 ) {
 
     companion object {
-        fun fromData(user: User, token: String?): UserVO =
+        fun fromData(user: User?, token: String?): UserVO =
                 UserVO(
-                        user.id,
-                        user.email,
+                        user?.id,
+                        user?.email,
                         token,
-                        user.firstName,
-                        user.lastName,
-                        user.confirmed
+                        user?.firstName,
+                        user?.lastName,
+                        user?.confirmed
                 )
     }
 
