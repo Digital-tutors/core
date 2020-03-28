@@ -2,7 +2,7 @@ package digital.tutors.autochecker.auth.services.impl
 
 import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.repositories.UserRepository
-import digital.tutors.autochecker.checker.services.UserService
+import digital.tutors.autochecker.auth.services.UserService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import digital.tutors.autochecker.core.services.impl.JwtServiceImpl
 import digital.tutors.autochecker.auth.vo.UserCreateRq

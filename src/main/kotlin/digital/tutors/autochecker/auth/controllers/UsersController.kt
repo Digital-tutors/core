@@ -1,11 +1,14 @@
 package digital.tutors.autochecker.auth.controllers
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import digital.tutors.autochecker.core.controller.BaseController
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
-import digital.tutors.autochecker.checker.services.UserService
+import digital.tutors.autochecker.auth.services.UserService
 import digital.tutors.autochecker.auth.vo.UserCreateRq
 import digital.tutors.autochecker.auth.vo.UserLoginRq
 import digital.tutors.autochecker.auth.vo.UserVO
+import digital.tutors.autochecker.core.configuration.SecurityConstants
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -48,6 +51,21 @@ class UserController : BaseController() {
     @GetMapping("/user/{id}")
     fun getUserById(@PathVariable id: String): ResponseEntity<UserVO> = processServiceExceptions {
         try {
+            ResponseEntity.ok(userService.getUserByIdOrThrow(id = id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User Not Found", ex)
+        }
+    }
+
+    @GetMapping("/user/me")
+    fun getUserByToken(@RequestHeader(name="Authorization") token: String): ResponseEntity<UserVO> = processServiceExceptions {
+        try {
+            val decodedJWT = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET))
+                    .withIssuer(SecurityConstants.TOKEN_ISSUER).build()
+                    .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
+            val id = decodedJWT.getClaim("id").asString()
+
             ResponseEntity.ok(userService.getUserByIdOrThrow(id = id))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(
