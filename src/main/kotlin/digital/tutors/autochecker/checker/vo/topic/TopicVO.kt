@@ -1,4 +1,4 @@
-package digital.tutors.autochecker.checker.vo
+package digital.tutors.autochecker.checker.vo.topic
 
 import digital.tutors.autochecker.auth.vo.UserVO
 import digital.tutors.autochecker.checker.entities.AccessType
@@ -21,7 +21,7 @@ data class TopicVO(
                         topic.title,
                         topic.accessType,
                         topic.followers?.map { UserVO.fromData(it, null) },
-                        UserVO.fromData(topic.authorId!!, null),
+                        topic.authorId?.let { UserVO.fromData(it, null) },
                         topic.contributors?.map { UserVO.fromData(it, null) },
                         topic.createdBy
                 )
