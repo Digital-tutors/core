@@ -1,7 +1,10 @@
 package digital.tutors.autochecker.auth.controllers
 
 import com.nhaarman.mockitokotlin2.*
-import digital.tutors.autochecker.checker.services.UserService
+import digital.tutors.autochecker.TestUtils
+import digital.tutors.autochecker.auth.services.UserService
+import digital.tutors.autochecker.auth.vo.UserCreateRq
+import digital.tutors.autochecker.auth.vo.UserLoginRq
 import digital.tutors.autochecker.auth.vo.UserVO
 import org.junit.Before
 import org.junit.Test
@@ -56,6 +59,18 @@ class UsersControllerTest {
         whenever(userService.getUserByIdOrThrow(eq("id1"))).thenReturn(users1)
         whenever(userService.getUsers(any())).thenReturn(PageImpl(listOf(users1, users2)))
 
+        whenever(userService.createUser(eq(UserCreateRq(
+                "test1@test.com",
+                "123",
+                "alex",
+                "smith"
+        )))).thenReturn(users1)
+
+        whenever(userService.loginUser(eq(UserLoginRq(
+                "test1@test.com",
+                "123"
+        )))).thenReturn(users1)
+
         mockMvcPublic = MockMvcBuilders
                 .standaloneSetup(UserController().apply {
                     userService = this@UsersControllerTest.userService
@@ -67,7 +82,7 @@ class UsersControllerTest {
     fun findAllUsersPageable() {
         mockMvcPublic
                 .perform(
-                        MockMvcRequestBuilders.get("/api/users?page=0")
+                        MockMvcRequestBuilders.get("/users?page=0")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(MockMvcResultHandlers.print())
@@ -88,7 +103,7 @@ class UsersControllerTest {
     fun findUsersById() {
         mockMvcPublic
                 .perform(
-                        MockMvcRequestBuilders.get("/api/user/id1")
+                        MockMvcRequestBuilders.get("/user/id1")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(MockMvcResultHandlers.print())
@@ -100,6 +115,56 @@ class UsersControllerTest {
                 .andExpect(jsonPath("$.firstName").value("alex"))
                 .andExpect(jsonPath("$.lastName").value("smith"))
         verify(userService).getUserByIdOrThrow(eq("id1"))
+    }
+
+    @Test
+    fun login() {
+        val loginCreateRq = UserLoginRq(
+                "test1@test.com",
+                "123"
+        )
+
+        mockMvcPublic
+                .perform(
+                        MockMvcRequestBuilders.post("/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.convertObjectToJsonBytes(loginCreateRq))
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value("id1"))
+                .andExpect(jsonPath("$.email").value("test1@test.com"))
+                .andExpect(jsonPath("$.confirmed").value("true"))
+                .andExpect(jsonPath("$.firstName").value("alex"))
+                .andExpect(jsonPath("$.lastName").value("smith"))
+        verify(userService).loginUser(eq(loginCreateRq))
+    }
+
+    @Test
+    fun signUp() {
+        val signUpCreateRq = UserCreateRq(
+                "test1@test.com",
+                "123",
+                "alex",
+                "smith"
+        )
+
+        mockMvcPublic
+                .perform(
+                        MockMvcRequestBuilders.post("/sign-up")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtils.convertObjectToJsonBytes(signUpCreateRq))
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value("id1"))
+                .andExpect(jsonPath("$.email").value("test1@test.com"))
+                .andExpect(jsonPath("$.confirmed").value("true"))
+                .andExpect(jsonPath("$.firstName").value("alex"))
+                .andExpect(jsonPath("$.lastName").value("smith"))
+        verify(userService).createUser(eq(signUpCreateRq))
     }
 
 
