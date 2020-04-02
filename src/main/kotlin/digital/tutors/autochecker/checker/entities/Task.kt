@@ -20,7 +20,7 @@ data class Task(
         var contributors: List<User>? = null,
 
         var level: Level = Level.JUNIOR,
-        var description: String?= null,
+        var description: String? = null,
         var options: Options? = null,
         var tests: Tests? = null
 ) : AuditableEntity()

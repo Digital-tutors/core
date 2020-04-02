@@ -5,13 +5,13 @@ import digital.tutors.autochecker.checker.entities.AccessType
 import digital.tutors.autochecker.checker.entities.Topic
 
 data class TopicVO(
-        var id: String?,
-        var title: String?,
-        var accessType: String?,
-        var followers: List<UserVO>?,
-        var authorId: UserVO?,
-        var contributors: List<UserVO>?,
-        var createdDate: String?
+        val id: String?,
+        val title: String?,
+        val accessType: String?,
+        val followers: List<UserVO>?,
+        val authorId: UserVO?,
+        val contributors: List<UserVO>?,
+        val createdDate: String?
 ) {
 
     companion object {
