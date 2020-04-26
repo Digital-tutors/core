@@ -1,6 +1,5 @@
 package digital.tutors.autochecker.checker.services.impl
 
-import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
 import digital.tutors.autochecker.checker.entities.Options
 import digital.tutors.autochecker.checker.repositories.TaskRepository
@@ -23,7 +22,17 @@ class TaskServiceImpl: TaskService {
     private val log = LoggerFactory.getLogger(UserServiceImpl::class.java)
 
     @Autowired
-    lateinit var taskRepository: TaskRepository;
+    lateinit var taskRepository: TaskRepository
+
+    @Throws(EntityNotFoundException::class)
+    override fun getTasksByAuthorId(authorId: String): List<TaskVO> {
+        return taskRepository.findByAuthorId(authorId)
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getTaskByTopicId(topicId: String): List<TaskVO> {
+        return taskRepository.findByTopicId(topicId)
+    }
 
     @Throws(EntityNotFoundException::class)
     override fun getTaskByIdOrThrow(id: String): TaskVO {
@@ -33,27 +42,26 @@ class TaskServiceImpl: TaskService {
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTask(pageable: Pageable): Page<TaskVO> {
+    override fun getTasks(pageable: Pageable): Page<TaskVO> {
         return taskRepository.findAll(pageable).map(::toTaskVO)
     }
 
     override fun createTask(taskCreateRq: TaskCreateRq): TaskVO {
         val id = taskRepository.save(Task().apply {
-            authorId = User(id = taskCreateRq.authorId?.id)
-            description = taskCreateRq.descriptions
+            description = taskCreateRq.description
             options = Options (
                     constructions = taskCreateRq.options?.constructions,
                     timeLimit = taskCreateRq.options?.timeLimit,
                     memoryLimit = taskCreateRq.options?.memoryLimit )
 
             tests = Tests (
-                    input = taskCreateRq.test?.input,
-                    output = taskCreateRq.test?.output  )
+                    input = taskCreateRq.tests?.input,
+                    output = taskCreateRq.tests?.output  )
 
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Created entity $id")
-        return getTaskByIdOrThrow(id);
+        return getTaskByIdOrThrow(id)
     }
 
     @Throws(EntityNotFoundException::class)
@@ -78,6 +86,7 @@ class TaskServiceImpl: TaskService {
         taskRepository.deleteById(id)
         log.debug("Deleted task entity $id")
     }
+
 
     private fun toTaskVO(task: Task): TaskVO {
         return TaskVO.fromData(task)

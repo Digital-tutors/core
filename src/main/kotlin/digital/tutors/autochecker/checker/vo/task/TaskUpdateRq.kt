@@ -4,6 +4,6 @@ import digital.tutors.autochecker.checker.vo.tests.TestsVO
 
 data class TaskUpdateRq (
         var description: String?,
-        var options: OptionsVO?,
+        var options: Options?,
         var tests: TestsVO?
 )

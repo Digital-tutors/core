@@ -8,11 +8,18 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface TaskService {
+
+    @Throws(EntityNotFoundException::class)
+    fun getTasksByAuthorId(authorId: String): List<TaskVO>
+
+    @Throws(EntityNotFoundException::class)
+    fun getTaskByTopicId(id: String): List<TaskVO>
+
     @Throws(EntityNotFoundException::class)
     fun getTaskByIdOrThrow(id: String): TaskVO
 
     @Throws(EntityNotFoundException::class)
-    fun getTask(pageable: Pageable): Page<TaskVO>
+    fun getTasks(pageable: Pageable): Page<TaskVO>
 
     @Throws(EntityNotFoundException::class)
     fun createTask(taskCreateRq: TaskCreateRq): TaskVO

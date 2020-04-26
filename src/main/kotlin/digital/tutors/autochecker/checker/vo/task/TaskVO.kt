@@ -6,14 +6,14 @@ import digital.tutors.autochecker.checker.vo.tests.TestsVO
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
 
 data class TaskVO(
-        var id: String?,
-        var topicId: TopicVO?,
-        var authorId: UserVO?,
-        var description: String?,
-        var contributors: List<UserVO>?,
-        var options: OptionsVO?,
-        var tests: TestsVO?,
-        var level: String
+        val id: String?,
+        val topicId: TopicVO?,
+        val authorId: UserVO?,
+        val description: String?,
+        val contributors: List<UserVO>?,
+        val options: Options?,
+        val tests: TestsVO?,
+        val level: String?
 
 ) {
     companion object {
@@ -24,7 +24,7 @@ data class TaskVO(
                         task.authorId?.let { UserVO.fromData(it, null) },
                         task.description,
                         task.contributors?.map { UserVO.fromData(it, null) },
-                        task.options?.let { OptionsVO.fromData(it) },
+                        task.options?.let { Options.fromData(it) },
                         task.tests?.let { TestsVO.fromData(it) },
                         task.level.toString()
                 )
