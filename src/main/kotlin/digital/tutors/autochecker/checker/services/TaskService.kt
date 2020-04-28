@@ -13,7 +13,7 @@ interface TaskService {
     fun getTasksByAuthorId(authorId: String): List<TaskVO>
 
     @Throws(EntityNotFoundException::class)
-    fun getTaskByTopicId(id: String): List<TaskVO>
+    fun getTaskByTopicId(topicId: String): List<TaskVO>
 
     @Throws(EntityNotFoundException::class)
     fun getTaskByIdOrThrow(id: String): TaskVO

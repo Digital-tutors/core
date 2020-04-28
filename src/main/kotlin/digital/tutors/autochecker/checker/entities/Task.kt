@@ -19,8 +19,8 @@ data class Task(
         @DBRef
         var contributors: List<User>? = null,
 
-        var level: Level = Level.JUNIOR,
-        var description: String?= null,
+        var level: Level? = Level.JUNIOR,
+        var description: String? = null,
         var options: Options? = null,
         var tests: Tests? = null
 ) : AuditableEntity()
