@@ -16,6 +16,9 @@ data class TaskResults(
         @DBRef
         var userId: User? = null,
 
+        var language: String? = null,
+        var sourceCode: String? = null,
+
         var completed: Boolean = false,
         var attempt: Int = 0,
         var codeReturn: String? = null,
