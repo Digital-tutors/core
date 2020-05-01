@@ -1,20 +1,21 @@
 package digital.tutors.autochecker.checker.vo.task
 
 import digital.tutors.autochecker.auth.vo.UserVO
+import digital.tutors.autochecker.checker.entities.Level
 import digital.tutors.autochecker.checker.entities.Options
 import digital.tutors.autochecker.checker.entities.Task
-import digital.tutors.autochecker.checker.entities.Tests
+import digital.tutors.autochecker.checker.entities.Test
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
 
 data class TaskVO(
-        val id: String?,
-        val topicId: TopicVO?,
-        val authorId: UserVO?,
-        val description: String?,
-        val contributors: List<UserVO>?,
-        val options: Options?,
-        val tests: Tests?,
-        val level: String?
+        var id: String?,
+        var topicId: TopicVO?,
+        var authorId: UserVO?,
+        var description: String?,
+        var contributors: List<UserVO>?,
+        var options: Options?,
+        var test: Test?,
+        var level: Level?
 ) {
 
     companion object {
@@ -26,8 +27,8 @@ data class TaskVO(
                         task.description,
                         task.contributors?.map { UserVO.fromData(it, null) },
                         task.options,
-                        task.tests,
-                        task.level.toString()
+                        task.test,
+                        task.level
                 )
     }
 
