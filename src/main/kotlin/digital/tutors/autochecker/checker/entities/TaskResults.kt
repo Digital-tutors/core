@@ -24,5 +24,10 @@ data class TaskResults(
         var codeReturn: String? = null,
         var messageOut: String? = null,
         var runtime: String? = null,
-        var memory: String? = null
+        var memory: String? = null,
+        var status: Status = Status.NOT_CHECKING
 ) : AuditableEntity()
+
+enum class Status {
+        NOT_CHECKING, RUNNING, COMPLETED
+}

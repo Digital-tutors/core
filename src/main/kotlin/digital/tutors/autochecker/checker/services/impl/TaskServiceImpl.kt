@@ -9,6 +9,7 @@ import digital.tutors.autochecker.checker.vo.task.TaskUpdateRq
 import digital.tutors.autochecker.checker.vo.task.TaskVO
 import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.entities.Topic
+import digital.tutors.autochecker.checker.vo.task.TaskAdminVO
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,20 +27,20 @@ class TaskServiceImpl : TaskService {
 
     @Throws(EntityNotFoundException::class)
     override fun getTasksByAuthorId(authorId: String): List<TaskVO> {
-        return taskRepository.findAllByAuthorId(User(id = authorId))
+        return taskRepository.findAllByAuthorId(User(id = authorId)).map(::toTaskVO)
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTaskByTopicId(topicId: String): List<TaskVO> {
-        return taskRepository.findAllByTopicId(Topic(id = topicId))
+    override fun getTasksByTopicId(topicId: String): List<TaskVO> {
+        return taskRepository.findAllByTopicId(Topic(id = topicId)).map(::toTaskVO)
     }
 
     @Throws(EntityNotFoundException::class)
     override fun getTaskByIdOrThrow(id: String): TaskVO = taskRepository.findById(id).map(::toTaskVO).orElseThrow { throw EntityNotFoundException("Task with $id not found.") }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTasks(pageable: Pageable): Page<TaskVO> {
-        return taskRepository.findAll(pageable).map(::toTaskVO)
+    override fun getTasks(pageable: Pageable): Page<TaskAdminVO> {
+        return taskRepository.findAll(pageable).map(::toTaskAdminVO)
     }
 
     override fun createTask(taskCreateRq: TaskCreateRq): TaskVO {
@@ -80,5 +81,10 @@ class TaskServiceImpl : TaskService {
     private fun toTaskVO(task: Task): TaskVO {
         return TaskVO.fromData(task)
     }
+
+    private fun toTaskAdminVO(task: Task): TaskAdminVO {
+        return TaskAdminVO.fromData(task)
+    }
+
 
 }

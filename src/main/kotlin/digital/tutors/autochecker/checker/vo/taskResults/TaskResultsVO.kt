@@ -1,6 +1,7 @@
 package digital.tutors.autochecker.checker.vo.taskResults
 
 import digital.tutors.autochecker.auth.vo.UserVO
+import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.entities.TaskResults
 import digital.tutors.autochecker.checker.vo.task.TaskVO
 
@@ -14,7 +15,8 @@ data class TaskResultsVO(
         val codeReturn: String?,
         val messageOut: String?,
         val runtime: String?,
-        val memory: String?
+        val memory: String?,
+        val status: String?
 ) {
 
     companion object {
@@ -29,7 +31,8 @@ data class TaskResultsVO(
                         taskResults.codeReturn,
                         taskResults.messageOut,
                         taskResults.runtime,
-                        taskResults.memory
+                        taskResults.memory,
+                        taskResults.status.toString()
                 )
     }
 

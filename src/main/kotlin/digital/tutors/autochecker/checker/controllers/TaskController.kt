@@ -1,6 +1,7 @@
 package digital.tutors.autochecker.checker.controllers
 
 import digital.tutors.autochecker.checker.services.TaskService
+import digital.tutors.autochecker.checker.vo.task.TaskAdminVO
 import digital.tutors.autochecker.checker.vo.task.TaskCreateRq
 import digital.tutors.autochecker.checker.vo.task.TaskUpdateRq
 import digital.tutors.autochecker.checker.vo.task.TaskVO
@@ -16,23 +17,22 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping
-class TaskController: BaseController() {
+class TaskController : BaseController() {
 
     @Autowired
     lateinit var taskService: TaskService
 
     @GetMapping("/tasks")
-    fun getTasks(@RequestParam page: Int): ResponseEntity<Page<TaskVO>> = processServiceExceptions {
+    fun getTasks(@RequestParam page: Int): ResponseEntity<Page<TaskAdminVO>> = processServiceExceptions {
         try {
-            val pageRequest = PageRequest.of(page,10);
+            val pageRequest = PageRequest.of(page, 10);
             ResponseEntity.ok(taskService.getTasks(pageRequest))
-        }
-        catch (ex: EntityNotFoundException) {
+        } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Tasks Not Found", ex)
         }
     }
 
-    @GetMapping("/task/author/{id}")
+    @GetMapping("/author/{id}/tasks")
     fun getTasksByAuthorId(@PathVariable id: String): ResponseEntity<List<TaskVO>> = processServiceExceptions {
         try {
             ResponseEntity.ok(taskService.getTasksByAuthorId(id))
@@ -41,8 +41,12 @@ class TaskController: BaseController() {
         }
     }
 
-    @GetMapping("/task/topic/{id}")
+    @GetMapping("/topic/{id}/tasks")
     fun getTasksByTopicId(@PathVariable id: String): ResponseEntity<List<TaskVO>> = processServiceExceptions {
+        /*
+            TODO: Проверка на получение тасков может быть от студента или препода
+         */
+
         try {
             ResponseEntity.ok(taskService.getTasksByTopicId(id))
         } catch (ex: EntityNotFoundException) {
@@ -66,7 +70,7 @@ class TaskController: BaseController() {
 
     @PutMapping("/task/{id}")
     fun updateTask(@PathVariable id: String, @RequestBody taskUpdateRq: TaskUpdateRq): ResponseEntity<TaskVO> = processServiceExceptions {
-            ResponseEntity.ok(taskService.updateTask(id, taskUpdateRq))
+        ResponseEntity.ok(taskService.updateTask(id, taskUpdateRq))
     }
 
     @DeleteMapping("/task/{id}")

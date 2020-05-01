@@ -1,5 +1,6 @@
 package digital.tutors.autochecker.checker.controllers
 
+import digital.tutors.autochecker.checker.services.TaskResultsService
 import digital.tutors.autochecker.checker.services.TaskService
 import digital.tutors.autochecker.checker.vo.task.TaskCreateRq
 import digital.tutors.autochecker.checker.vo.task.TaskUpdateRq
@@ -21,41 +22,45 @@ import org.springframework.web.server.ResponseStatusException
 class TaskResultsController: BaseController() {
 
     @Autowired
-    lateinit var taskService: TaskService
+    lateinit var taskResultsService: TaskResultsService
 
     @GetMapping("/decisions")
     fun getDecisions(@RequestParam page: Int): ResponseEntity<Page<TaskResultsVO>> = processServiceExceptions {
-//        try {
-//            val pageRequest = PageRequest.of(page,10);
-//            ResponseEntity.ok(taskService.getTasks(pageRequest))
-//        }
-//        catch (ex: EntityNotFoundException) {
-//            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decisions Not Found", ex)
-//        }
+        try {
+            val pageRequest = PageRequest.of(page,10);
+            ResponseEntity.ok(taskResultsService.getTaskResults(pageRequest))
+        }
+        catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decisions Not Found", ex)
+        }
+    }
 
-        TODO()
+    @GetMapping("/author/{id}/decisions")
+    fun getTasksByAuthorId(@PathVariable id: String): ResponseEntity<List<TaskResultsVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(taskResultsService.getTaskResultsByAuthorId(id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decisions Not Found", ex)
+        }
     }
 
     @GetMapping("/decision/{id}")
     fun getDecisionById(@PathVariable id: String): ResponseEntity<TaskResultsVO> = processServiceExceptions {
-//        try {
-//            ResponseEntity.ok(taskService.getTaskByIdOrThrow(id))
-//        } catch (ex: EntityNotFoundException) {
-//            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decision Not Found", ex)
-//        }
-
-        TODO()
+        try {
+            ResponseEntity.ok(taskResultsService.getTaskResultsByIdOrThrow(id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decision Not Found", ex)
+        }
     }
 
     @PostMapping("/decision")
-    fun createDecision(@RequestBody taskCreateRq: TaskCreateRq): ResponseEntity<TaskResultsCreateRq> = processServiceExceptions {
-        ResponseEntity.ok(taskService.createTask(taskCreateRq))
-        TODO()
+    fun saveDecision(@RequestBody taskResultsCreateRq: TaskResultsCreateRq): ResponseEntity<TaskResultsVO> = processServiceExceptions {
+        ResponseEntity.ok(taskResultsService.saveTaskResults(taskResultsCreateRq))
     }
 
     @DeleteMapping("/decision/{id}")
     fun deleteDecision(@PathVariable id: String): ResponseEntity<*> = processServiceExceptions {
-        ResponseEntity.ok(taskService.delete(id))
+        ResponseEntity.ok(taskResultsService.delete(id))
     }
 
 }
