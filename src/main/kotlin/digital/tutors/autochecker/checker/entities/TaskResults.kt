@@ -16,10 +16,18 @@ data class TaskResults(
         @DBRef
         var userId: User? = null,
 
+        var language: String? = null,
+        var sourceCode: String? = null,
+
         var completed: Boolean = false,
         var attempt: Int = 0,
         var codeReturn: String? = null,
         var messageOut: String? = null,
         var runtime: String? = null,
-        var memory: String? = null
+        var memory: String? = null,
+        var status: Status = Status.NOT_CHECKING
 ) : AuditableEntity()
+
+enum class Status {
+        NOT_CHECKING, RUNNING, COMPLETED
+}

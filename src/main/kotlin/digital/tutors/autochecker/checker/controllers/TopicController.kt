@@ -18,11 +18,20 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping
 class TopicController : BaseController() {
 
+    /*
+     TODO: Проверка на id пользователей
+     TODO: Добавление подписчиков и контрибьюторов отдельным роутом
+     */
+
     @Autowired
     lateinit var topicService: TopicService
 
     @GetMapping("/topics")
     fun getTopics(@RequestParam page: Int): ResponseEntity<Page<TopicVO>> = processServiceExceptions {
+        /*
+        TODO: Получение тем с PUBLIС ключом
+         */
+
         try {
             val pageRequest = PageRequest.of(page, 10)
             ResponseEntity.ok(topicService.getTopics(pageRequest))

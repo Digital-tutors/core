@@ -18,11 +18,10 @@ data class Task(
 
         @DBRef
         var contributors: List<User>? = null,
-
-        var level: Level = Level.JUNIOR,
+        var level: Level? = Level.JUNIOR,
         var description: String? = null,
         var options: Options? = null,
-        var tests: Tests? = null
+        var test: Test? = null
 ) : AuditableEntity()
 
 enum class Level {
@@ -35,7 +34,7 @@ data class Options(
         var memoryLimit: String? = null
 )
 
-data class Tests(
+data class Test(
         var input: List<String>? = null,
         var output: List<String>? = null
 )
