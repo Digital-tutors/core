@@ -32,6 +32,24 @@ class TaskController: BaseController() {
         }
     }
 
+    @GetMapping("/task/author/{id}")
+    fun getTasksByAuthorId(@PathVariable id: String): ResponseEntity<List<TaskVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(taskService.getTasksByAuthorId(id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Tasks Not Found", ex)
+        }
+    }
+
+    @GetMapping("/task/topic/{id}")
+    fun getTasksByTopicId(@PathVariable id: String): ResponseEntity<List<TaskVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(taskService.getTasksByTopicId(id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Tasks Not Found", ex)
+        }
+    }
+
     @GetMapping("/task/{id}")
     fun getTaskById(@PathVariable id: String): ResponseEntity<TaskVO> = processServiceExceptions {
         try {
