@@ -4,8 +4,8 @@ import digital.tutors.autochecker.checker.entities.AccessType
 import digital.tutors.autochecker.core.entity.EntityRefRq
 
 data class TopicUpdateRq(
-        var title: String?,
-        var accessType: AccessType?,
-        var followers: List<EntityRefRq>? = null,
-        var contributors: List<EntityRefRq>? = null
+        val title: String?,
+        val accessType: AccessType?,
+        val followers: List<EntityRefRq>? = null,
+        val contributors: List<EntityRefRq>? = null
 )
