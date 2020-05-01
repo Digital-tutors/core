@@ -1,9 +1,7 @@
 package digital.tutors.autochecker.checker.vo.task
 
 import digital.tutors.autochecker.auth.vo.UserVO
-import digital.tutors.autochecker.checker.entities.Options
 import digital.tutors.autochecker.checker.entities.Task
-import digital.tutors.autochecker.checker.entities.Tests
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
 
 data class TaskVO(
