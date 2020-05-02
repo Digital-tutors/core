@@ -2,6 +2,7 @@ package digital.tutors.autochecker.checker.services.impl
 
 import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
+import digital.tutors.autochecker.checker.entities.AccessType
 import digital.tutors.autochecker.checker.entities.Topic
 import digital.tutors.autochecker.checker.repositories.TopicRepository
 import digital.tutors.autochecker.checker.services.TopicService
@@ -27,7 +28,7 @@ class TopicServiceImpl : TopicService {
     override fun getTopicByIdOrThrow(id: String): TopicVO = topicRepository.findById(id).map(::toTopicVO).orElseThrow { throw EntityNotFoundException("Topic with $id not found.") }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTopics(pageable: Pageable): Page<TopicVO> = topicRepository.findAll(pageable).map(::toTopicVO)
+    override fun getPublicTopics(pageable: Pageable): Page<TopicVO> = topicRepository.findAllByAccessTypeEquals(AccessType.PUBLIC, pageable).map(::toTopicVO)
 
     override fun createTopic(topicCreateRq: TopicCreateRq): TopicVO {
         val id = topicRepository.save(Topic().apply {

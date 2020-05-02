@@ -12,5 +12,5 @@ data class TaskCreateRq(
         var level: Level?,
         var description: String?,
         var options: Options?,
-        var test: Test?
+        var tests: Test?
 )

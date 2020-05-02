@@ -34,7 +34,7 @@ class TopicController : BaseController() {
 
         try {
             val pageRequest = PageRequest.of(page, 10)
-            ResponseEntity.ok(topicService.getTopics(pageRequest))
+            ResponseEntity.ok(topicService.getPublicTopics(pageRequest))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Topics Not Found", ex)

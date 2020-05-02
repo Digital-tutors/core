@@ -63,6 +63,15 @@ class TaskController : BaseController() {
         }
     }
 
+    @GetMapping("/task/{id}/admin")
+    fun getAdminTaskById(@PathVariable id: String): ResponseEntity<TaskAdminVO> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(taskService.getAdminTaskByIdOrThrow(id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Task Not Found", ex)
+        }
+    }
+
     @PostMapping("/task")
     fun createTask(@RequestBody taskCreateRq: TaskCreateRq): ResponseEntity<TaskVO> = processServiceExceptions {
         ResponseEntity.ok(taskService.createTask(taskCreateRq))

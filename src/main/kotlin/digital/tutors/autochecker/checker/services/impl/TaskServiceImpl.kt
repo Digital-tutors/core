@@ -39,6 +39,9 @@ class TaskServiceImpl : TaskService {
     override fun getTaskByIdOrThrow(id: String): TaskVO = taskRepository.findById(id).map(::toTaskVO).orElseThrow { throw EntityNotFoundException("Task with $id not found.") }
 
     @Throws(EntityNotFoundException::class)
+    override fun getAdminTaskByIdOrThrow(id: String): TaskAdminVO = taskRepository.findById(id).map(::toTaskAdminVO).orElseThrow { throw EntityNotFoundException("Task with $id not found.") }
+
+    @Throws(EntityNotFoundException::class)
     override fun getTasks(pageable: Pageable): Page<TaskAdminVO> {
         return taskRepository.findAll(pageable).map(::toTaskAdminVO)
     }
@@ -51,7 +54,7 @@ class TaskServiceImpl : TaskService {
             level = taskCreateRq.level
             description = taskCreateRq.description
             options = taskCreateRq.options
-            test = taskCreateRq.test
+            tests = taskCreateRq.tests
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Created entity $id")
@@ -66,7 +69,7 @@ class TaskServiceImpl : TaskService {
             level = taskUpdateRq.level
             description = taskUpdateRq.description
             options = taskUpdateRq.options
-            test = taskUpdateRq.test
+            tests = taskUpdateRq.tests
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Updated task entity $id")

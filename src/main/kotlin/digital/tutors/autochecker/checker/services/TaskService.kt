@@ -20,6 +20,9 @@ interface TaskService {
     fun getTaskByIdOrThrow(id: String): TaskVO
 
     @Throws(EntityNotFoundException::class)
+    fun getAdminTaskByIdOrThrow(id: String): TaskAdminVO
+
+    @Throws(EntityNotFoundException::class)
     fun getTasks(pageable: Pageable): Page<TaskAdminVO>
 
     @Throws(EntityNotFoundException::class)
