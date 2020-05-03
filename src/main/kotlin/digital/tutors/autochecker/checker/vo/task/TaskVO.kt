@@ -1,6 +1,7 @@
 package digital.tutors.autochecker.checker.vo.task
 
 import digital.tutors.autochecker.auth.vo.UserVO
+import digital.tutors.autochecker.checker.entities.Level
 import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
 
@@ -10,7 +11,7 @@ data class TaskVO(
         val authorId: UserVO?,
         val description: String?,
         val contributors: List<UserVO>?,
-        val level: String?
+        val level: Level?
 ) {
 
     companion object {
@@ -21,7 +22,7 @@ data class TaskVO(
                         task.authorId?.let { UserVO.fromData(it, null) },
                         task.description,
                         task.contributors?.map { UserVO.fromData(it, null) },
-                        task.level.toString()
+                        task.level
                 )
     }
 

@@ -25,7 +25,7 @@ class UserController : BaseController() {
     @Autowired
     lateinit var userService: UserService
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     fun login(@RequestBody userLoginRq: UserLoginRq): ResponseEntity<UserVO> = processServiceExceptions {
         ResponseEntity.ok(userService.loginUser(userLoginRq))
     }

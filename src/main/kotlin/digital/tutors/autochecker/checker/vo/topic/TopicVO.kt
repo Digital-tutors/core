@@ -7,7 +7,7 @@ import digital.tutors.autochecker.checker.entities.Topic
 data class TopicVO(
         val id: String?,
         val title: String?,
-        val accessType: String?,
+        val accessType: AccessType?,
         val followers: List<UserVO>?,
         val authorId: UserVO?,
         val contributors: List<UserVO>?,
@@ -19,7 +19,7 @@ data class TopicVO(
                 TopicVO(
                         topic.id,
                         topic.title,
-                        topic.accessType.toString(),
+                        topic.accessType,
                         topic.followers?.map { UserVO.fromData(it, null) },
                         topic.authorId?.let { UserVO.fromData(it, null) },
                         topic.contributors?.map { UserVO.fromData(it, null) },

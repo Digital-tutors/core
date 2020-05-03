@@ -1,5 +1,6 @@
 package digital.tutors.autochecker.auth.vo
 
+import digital.tutors.autochecker.auth.entities.Roles
 import digital.tutors.autochecker.auth.entities.User
 
 data class UserVO(
@@ -8,7 +9,8 @@ data class UserVO(
         val token: String? = null,
         val firstName: String?,
         val lastName: String?,
-        val confirmed: Boolean?
+        val confirmed: Boolean?,
+        val role: Roles?
 ) {
 
     companion object {
@@ -19,7 +21,8 @@ data class UserVO(
                         token,
                         user?.firstName,
                         user?.lastName,
-                        user?.confirmed
+                        user?.confirmed,
+                        user?.role
                 )
     }
 

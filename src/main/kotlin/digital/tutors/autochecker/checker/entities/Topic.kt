@@ -19,7 +19,10 @@ data class Topic(
         var authorId: User? = null,
 
         @DBRef
-        var contributors: List<User>? = null
+        var contributors: List<User>? = null,
+
+        @DBRef
+        var subscribers: List<User>? = null
 ) : AuditableEntity()
 
 enum class AccessType {

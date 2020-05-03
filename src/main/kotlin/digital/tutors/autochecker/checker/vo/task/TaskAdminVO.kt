@@ -1,6 +1,7 @@
 package digital.tutors.autochecker.checker.vo.task
 
 import digital.tutors.autochecker.auth.vo.UserVO
+import digital.tutors.autochecker.checker.entities.Level
 import digital.tutors.autochecker.checker.entities.Options
 import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.entities.Test
@@ -14,7 +15,7 @@ data class TaskAdminVO(
         val contributors: List<UserVO>?,
         val options: Options?,
         val tests: Test?,
-        val level: String?
+        val level: Level?
 ) {
 
     companion object {
@@ -27,7 +28,7 @@ data class TaskAdminVO(
                         task.contributors?.map { UserVO.fromData(it, null) },
                         task.options,
                         task.tests,
-                        task.level.toString()
+                        task.level
                 )
     }
 

@@ -1,7 +1,9 @@
 package digital.tutors.autochecker.auth.entities
 
+import digital.tutors.autochecker.checker.entities.Topic
 import digital.tutors.autochecker.core.entity.AuditableEntity
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
@@ -23,7 +25,10 @@ data class User(
         var lastName: String? = null,
 
         var role: Roles = Roles.ROLE_USER,
-        var confirmed: Boolean = false
+        var confirmed: Boolean = false,
+
+        @DBRef
+        var topics: List<Topic>? = null
 ) : AuditableEntity()
 
 enum class Roles {
