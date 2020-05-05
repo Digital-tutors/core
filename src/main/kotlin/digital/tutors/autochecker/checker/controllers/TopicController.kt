@@ -4,8 +4,7 @@ import digital.tutors.autochecker.checker.services.TopicService
 import digital.tutors.autochecker.checker.vo.topic.TopicCreateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
-import digital.tutors.autochecker.core.auth.currentAuthentication
-import digital.tutors.autochecker.core.auth.currentUserOrNull
+import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.controller.BaseController
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,6 +27,9 @@ class TopicController : BaseController() {
     @Autowired
     lateinit var topicService: TopicService
 
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
+
     @GetMapping("/topics")
     fun getTopics(@RequestParam page: Int): ResponseEntity<Page<TopicVO>> = processServiceExceptions {
         /*
@@ -46,7 +48,7 @@ class TopicController : BaseController() {
     @GetMapping("/topic/{id}")
     fun getTopicById(@PathVariable id: String): ResponseEntity<TopicVO> = processServiceExceptions {
 
-        println(currentAuthentication())
+        println(authorizationService.currentUserIdOrDie())
         try {
             ResponseEntity.ok(topicService.getTopicByIdOrThrow(id))
         } catch (ex: EntityNotFoundException) {

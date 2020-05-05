@@ -3,8 +3,8 @@ package digital.tutors.autochecker.core.configuration
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
+import digital.tutors.autochecker.core.auth.JWTDecoder
 import digital.tutors.autochecker.core.configuration.SecurityConstants.Companion.HEADER_STRING
-import digital.tutors.autochecker.core.configuration.SecurityConstants.Companion.SECRET
 import digital.tutors.autochecker.core.configuration.SecurityConstants.Companion.TOKEN_ISSUER
 import digital.tutors.autochecker.core.configuration.SecurityConstants.Companion.TOKEN_PREFIX
 import io.jsonwebtoken.io.IOException
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 open class JWTAuthorizationFilter(
+        private val jwtDecoder: JWTDecoder,
         authManager: AuthenticationManager?
 ) : BasicAuthenticationFilter(authManager) {
 
@@ -39,28 +40,15 @@ open class JWTAuthorizationFilter(
     private fun getAuthentication(request: HttpServletRequest): UsernamePasswordAuthenticationToken? {
         val token = request.getHeader(HEADER_STRING)
         if (token != null) {
-            // parse the token.
-            val decodedJWT = JWT.require(Algorithm.HMAC512(SECRET))
-                    .withIssuer(TOKEN_ISSUER)
-                    .build()
-                    .verify(token.replace(TOKEN_PREFIX, ""))
-            val user = decodedJWT.payload
-            val authority = getAuthorities(decodedJWT)
+            val decodedJWT = jwtDecoder.decode(token)
+            val user = decodedJWT.subject
+            val authorities = jwtDecoder.getAuthorities(decodedJWT)
 
             return if (user != null) {
-                UsernamePasswordAuthenticationToken(user, null, authority)
+                UsernamePasswordAuthenticationToken(user, null, authorities)
             } else null
         }
         return null
     }
-
-    private fun getAuthorities(decodedJWT: DecodedJWT?): List<GrantedAuthority> =
-            decodedJWT
-                    ?.getClaim("role")
-                    ?.asString()
-                    ?.split(',')
-                    ?.map { GrantedAuthority { it } }
-                    ?.toList()
-                    ?: emptyList()
 
 }

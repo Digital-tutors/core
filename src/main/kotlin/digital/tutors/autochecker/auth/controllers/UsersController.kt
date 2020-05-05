@@ -8,6 +8,7 @@ import digital.tutors.autochecker.auth.services.UserService
 import digital.tutors.autochecker.auth.vo.UserCreateRq
 import digital.tutors.autochecker.auth.vo.UserLoginRq
 import digital.tutors.autochecker.auth.vo.UserVO
+import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.configuration.SecurityConstants
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -24,6 +25,9 @@ class UserController : BaseController() {
 
     @Autowired
     lateinit var userService: UserService
+
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
 
     @PostMapping("/api/login")
     fun login(@RequestBody userLoginRq: UserLoginRq): ResponseEntity<UserVO> = processServiceExceptions {
@@ -59,12 +63,9 @@ class UserController : BaseController() {
     }
 
     @GetMapping("/user/me")
-    fun getUserByToken(@RequestHeader(name="Authorization") token: String): ResponseEntity<UserVO> = processServiceExceptions {
+    fun getUserByToken(): ResponseEntity<UserVO> = processServiceExceptions {
         try {
-            val decodedJWT = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET))
-                    .withIssuer(SecurityConstants.TOKEN_ISSUER).build()
-                    .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
-            val id = decodedJWT.getClaim("id").asString()
+            val id = authorizationService.currentUserIdOrDie()
 
             ResponseEntity.ok(userService.getUserByIdOrThrow(id = id))
         } catch (ex: EntityNotFoundException) {

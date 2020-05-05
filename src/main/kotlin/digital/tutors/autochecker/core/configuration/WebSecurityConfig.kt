@@ -1,6 +1,8 @@
 package digital.tutors.autochecker.core.configuration
 
+import digital.tutors.autochecker.core.auth.JWTDecoder
 import digital.tutors.autochecker.core.services.impl.UserDetailsServiceImpl
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -22,6 +24,9 @@ class WebSecurityConfig(
         val userDetailsService: UserDetailsServiceImpl,
         val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : WebSecurityConfigurerAdapter() {
+
+    @Autowired
+    private lateinit var jwtDecoder: JWTDecoder
 
     @Bean(name = [BeanIds.AUTHENTICATION_MANAGER])
     @Throws(Exception::class)
@@ -47,11 +52,12 @@ class WebSecurityConfig(
                 .and()
                 .addFilterBefore(
                         JWTAuthenticationFilter(
+                                jwtDecoder,
                                 authenticationManagerBean()
                         ),
                         UsernamePasswordAuthenticationFilter::class.java
                 )
-                .addFilter(JWTAuthorizationFilter(authenticationManagerBean()))
+                .addFilter(JWTAuthorizationFilter(jwtDecoder, authenticationManagerBean()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 
