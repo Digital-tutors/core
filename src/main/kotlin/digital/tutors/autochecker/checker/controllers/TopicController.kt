@@ -70,6 +70,11 @@ class TopicController : BaseController() {
         ResponseEntity.ok(topicService.updateTopic(id, topicUpdateRq))
     }
 
+    @PostMapping("/topic/{id}/user/{user}")
+    fun subscribeTopic(@PathVariable id: String, @PathVariable user: String): ResponseEntity<*> = processServiceExceptions {
+        ResponseEntity.ok(topicService.subscribeTopic(id, user))
+    }
+
     @DeleteMapping("/topic/{id}")
     fun deleteAdvantage(@PathVariable id: String): ResponseEntity<*> = processServiceExceptions {
         ResponseEntity.ok(topicService.delete(id))

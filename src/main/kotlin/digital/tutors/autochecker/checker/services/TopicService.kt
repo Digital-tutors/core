@@ -17,6 +17,8 @@ interface TopicService {
 
     fun createTopic(topicCreateRq: TopicCreateRq): TopicVO
 
+    fun subscribeTopic(id: String, userId: String)
+
     @Throws(EntityNotFoundException::class)
     fun updateTopic(id: String, topicUpdateRq: TopicUpdateRq): TopicVO
 
