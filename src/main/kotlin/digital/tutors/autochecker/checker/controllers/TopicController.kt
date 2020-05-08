@@ -30,6 +30,16 @@ class TopicController : BaseController() {
     @Autowired
     lateinit var authorizationService: AuthorizationService
 
+    @GetMapping("/user/{user}/topics")
+    fun getSubscribedTopics(@PathVariable user: String): ResponseEntity<List<TopicVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(topicService.getSubscribedTopics(user))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Subscribed topics Not Found", ex)
+        }
+    }
+
     @GetMapping("/topics")
     fun getTopics(@RequestParam page: Int): ResponseEntity<Page<TopicVO>> = processServiceExceptions {
         /*
@@ -72,6 +82,7 @@ class TopicController : BaseController() {
 
     @PostMapping("/topic/{id}/user/{user}")
     fun subscribeTopic(@PathVariable id: String, @PathVariable user: String): ResponseEntity<*> = processServiceExceptions {
+        // TODO: Возможно стоит брать айди из токена, но сделаем потом
         ResponseEntity.ok(topicService.subscribeTopic(id, user))
     }
 

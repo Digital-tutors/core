@@ -30,6 +30,13 @@ class TopicServiceImpl : TopicService {
     lateinit var userRepository: UserRepository
 
     @Throws(EntityNotFoundException::class)
+    override fun getSubscribedTopics(userId: String): List<TopicVO> {
+        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+
+        return topicRepository.findAllByFollowersContains(user).map(::toTopicVO)
+    }
+
+    @Throws(EntityNotFoundException::class)
     override fun getTopicByIdOrThrow(id: String): TopicVO = topicRepository.findById(id).map(::toTopicVO).orElseThrow { throw EntityNotFoundException("Topic with $id not found.") }
 
     @Throws(EntityNotFoundException::class)
@@ -49,7 +56,7 @@ class TopicServiceImpl : TopicService {
     }
 
     override fun subscribeTopic(id: String, userId: String) {
-        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $id not found.")
+        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
 
         topicRepository.save(topicRepository.findById(id).get().apply {
             followers = followers?.plus(user)?.distinct()

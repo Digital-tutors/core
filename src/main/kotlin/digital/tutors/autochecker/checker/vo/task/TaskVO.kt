@@ -2,7 +2,9 @@ package digital.tutors.autochecker.checker.vo.task
 
 import digital.tutors.autochecker.auth.vo.UserVO
 import digital.tutors.autochecker.checker.entities.Level
+import digital.tutors.autochecker.checker.entities.Options
 import digital.tutors.autochecker.checker.entities.Task
+import digital.tutors.autochecker.checker.entities.Test
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
 
 data class TaskVO(
@@ -11,6 +13,8 @@ data class TaskVO(
         val authorId: UserVO?,
         val description: String?,
         val contributors: List<UserVO>?,
+        val options: Options?,
+        val tests: Test?,
         val level: Level?
 ) {
 
@@ -22,6 +26,11 @@ data class TaskVO(
                         task.authorId?.let { UserVO.fromData(it, null) },
                         task.description,
                         task.contributors?.map { UserVO.fromData(it, null) },
+                        task.options,
+                        task.tests?.apply {
+                            input = input?.slice(0..0)
+                            output = output?.slice(0..0)
+                        },
                         task.level
                 )
     }

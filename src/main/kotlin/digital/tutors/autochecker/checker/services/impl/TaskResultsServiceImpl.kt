@@ -4,10 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
 import digital.tutors.autochecker.checker.entities.Status
-import digital.tutors.autochecker.checker.vo.task.TaskVO
 import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.entities.TaskResults
-import digital.tutors.autochecker.checker.entities.Topic
 import digital.tutors.autochecker.checker.repositories.TaskResultsRepository
 import digital.tutors.autochecker.checker.services.TaskResultsService
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsCreateMQ

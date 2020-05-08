@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable
 interface TopicService {
 
     @Throws(EntityNotFoundException::class)
+    fun getSubscribedTopics(userId: String): List<TopicVO>
+
+    @Throws(EntityNotFoundException::class)
     fun getTopicByIdOrThrow(id: String): TopicVO
 
     @Throws(EntityNotFoundException::class)
