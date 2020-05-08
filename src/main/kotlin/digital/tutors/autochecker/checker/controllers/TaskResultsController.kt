@@ -44,6 +44,15 @@ class TaskResultsController: BaseController() {
         }
     }
 
+    @GetMapping("/user/{user}/task/{task}/decisions")
+    fun getTasksByUserAndTask(@PathVariable user: String, @PathVariable task: String): ResponseEntity<List<TaskResultsVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(taskResultsService.getTaskResultsByUserAndTask(user, task))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decisions for user with topic Not Found", ex)
+        }
+    }
+
     @GetMapping("/decision/{id}")
     fun getDecisionById(@PathVariable id: String): ResponseEntity<TaskResultsVO> = processServiceExceptions {
         try {
