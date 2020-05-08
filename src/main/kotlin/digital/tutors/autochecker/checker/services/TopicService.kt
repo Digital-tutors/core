@@ -10,12 +10,17 @@ import org.springframework.data.domain.Pageable
 interface TopicService {
 
     @Throws(EntityNotFoundException::class)
+    fun getSubscribedTopics(userId: String): List<TopicVO>
+
+    @Throws(EntityNotFoundException::class)
     fun getTopicByIdOrThrow(id: String): TopicVO
 
     @Throws(EntityNotFoundException::class)
     fun getPublicTopics(pageable: Pageable): Page<TopicVO>
 
     fun createTopic(topicCreateRq: TopicCreateRq): TopicVO
+
+    fun subscribeTopic(id: String, userId: String)
 
     @Throws(EntityNotFoundException::class)
     fun updateTopic(id: String, topicUpdateRq: TopicUpdateRq): TopicVO

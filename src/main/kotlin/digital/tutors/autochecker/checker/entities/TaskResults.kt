@@ -20,7 +20,7 @@ data class TaskResults(
         var sourceCode: String? = null,
 
         var completed: Boolean = false,
-        var attempt: Int = 0,
+        var attempt: Int = 1,
         var codeReturn: String? = null,
         var messageOut: String? = null,
         var runtime: String? = null,

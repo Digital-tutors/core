@@ -13,6 +13,9 @@ interface TaskResultsService {
     fun getTaskResultsByAuthorId(authorId: String): List<TaskResultsVO>
 
     @Throws(EntityNotFoundException::class)
+    fun getTaskResultsByUserAndTask(userId: String, taskId: String): List<TaskResultsVO>
+
+    @Throws(EntityNotFoundException::class)
     fun getTaskResultsByTopicId(taskId: String): List<TaskResultsVO>
 
     @Throws(EntityNotFoundException::class)

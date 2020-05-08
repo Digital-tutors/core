@@ -2,12 +2,12 @@ package digital.tutors.autochecker.checker.services.impl
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import digital.tutors.autochecker.auth.entities.User
+import digital.tutors.autochecker.auth.repositories.UserRepository
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
 import digital.tutors.autochecker.checker.entities.Status
-import digital.tutors.autochecker.checker.vo.task.TaskVO
 import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.entities.TaskResults
-import digital.tutors.autochecker.checker.entities.Topic
+import digital.tutors.autochecker.checker.repositories.TaskRepository
 import digital.tutors.autochecker.checker.repositories.TaskResultsRepository
 import digital.tutors.autochecker.checker.services.TaskResultsService
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsCreateMQ
@@ -19,6 +19,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,6 +31,12 @@ class TaskResultsServiceImpl : TaskResultsService {
     lateinit var taskResultsRepository: TaskResultsRepository
 
     @Autowired
+    lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var taskRepository: TaskRepository
+
+    @Autowired
     lateinit var rabbitTemplate: RabbitTemplate
 
     private val mapper = jacksonObjectMapper()
@@ -37,6 +44,14 @@ class TaskResultsServiceImpl : TaskResultsService {
     @Throws(EntityNotFoundException::class)
     override fun getTaskResultsByAuthorId(authorId: String): List<TaskResultsVO> {
         return taskResultsRepository.findAllByUserId(User(id = authorId)).map(::toTaskResultsVO)
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getTaskResultsByUserAndTask(userId: String, taskId: String): List<TaskResultsVO> {
+        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+        val task = taskRepository.findByIdOrNull(taskId) ?: throw EntityNotFoundException("Task with $taskId not found.")
+
+        return taskResultsRepository.findAllByUserIdAndTaskId(user, task).map(::toTaskResultsVO)
     }
 
     @Throws(EntityNotFoundException::class)
@@ -53,27 +68,23 @@ class TaskResultsServiceImpl : TaskResultsService {
     }
 
     override fun saveTaskResults(taskResultsCreateRq: TaskResultsCreateRq): TaskResultsVO {
-        val existingResults = taskResultsRepository.findFirstByUserIdAndTaskId(
+        val existingResults = taskResultsRepository.findFirstByUserIdAndTaskIdAndLanguageOrderByAttemptDesc(
                 User(id = taskResultsCreateRq.userId?.id),
-                Task(id = taskResultsCreateRq.taskId?.id)
+                Task(id = taskResultsCreateRq.taskId?.id),
+                language = taskResultsCreateRq.language!!
         )
 
-        val taskResultsId = if (existingResults != null) {
-            taskResultsRepository.save(existingResults.apply {
-                language = taskResultsCreateRq.language
-                sourceCode = taskResultsCreateRq.sourceCode
+        val taskResultsId = taskResultsRepository.save(TaskResults().apply {
+            taskId = Task(taskResultsCreateRq.taskId?.id)
+            userId = User(taskResultsCreateRq.userId?.id)
+            language = taskResultsCreateRq.language
+            sourceCode = taskResultsCreateRq.sourceCode
+            status = Status.RUNNING
+        }.apply {
+            if (existingResults != null) {
                 attempt = existingResults.attempt + 1
-                status = Status.RUNNING
-            }).id ?: throw IllegalArgumentException("Bad id returned.")
-        } else {
-            taskResultsRepository.save(TaskResults().apply {
-                taskId = Task(taskResultsCreateRq.taskId?.id)
-                userId = User(taskResultsCreateRq.userId?.id)
-                language = taskResultsCreateRq.language
-                sourceCode = taskResultsCreateRq.sourceCode
-                status = Status.RUNNING
-            }).id ?: throw IllegalArgumentException("Bad id returned.")
-        }
+            }
+        }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         rabbitTemplate.convertSendAndReceive(
                 "program",
