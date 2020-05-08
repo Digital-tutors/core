@@ -9,5 +9,6 @@ interface TaskResultsRepository : MongoRepository<TaskResults, String> {
     fun findAllByUserId(userId: User): List<TaskResults>
     fun findAllByTaskId(taskId: Task): List<TaskResults>
     fun findFirstByUserIdAndTaskId(userId: User, taskId: Task): TaskResults?
+    fun findFirstByUserIdAndTaskIdAndLanguageOrderByAttemptDesc(userId: User, taskId: Task, language: String): TaskResults?
     fun findFirstById(id: String): TaskResults
 }

@@ -51,27 +51,23 @@ class TaskResultsServiceImpl : TaskResultsService {
     }
 
     override fun saveTaskResults(taskResultsCreateRq: TaskResultsCreateRq): TaskResultsVO {
-        val existingResults = taskResultsRepository.findFirstByUserIdAndTaskId(
+        val existingResults = taskResultsRepository.findFirstByUserIdAndTaskIdAndLanguageOrderByAttemptDesc(
                 User(id = taskResultsCreateRq.userId?.id),
-                Task(id = taskResultsCreateRq.taskId?.id)
+                Task(id = taskResultsCreateRq.taskId?.id),
+                language = taskResultsCreateRq.language!!
         )
 
-        val taskResultsId = if (existingResults != null) {
-            taskResultsRepository.save(existingResults.apply {
-                language = taskResultsCreateRq.language
-                sourceCode = taskResultsCreateRq.sourceCode
+        val taskResultsId = taskResultsRepository.save(TaskResults().apply {
+            taskId = Task(taskResultsCreateRq.taskId?.id)
+            userId = User(taskResultsCreateRq.userId?.id)
+            language = taskResultsCreateRq.language
+            sourceCode = taskResultsCreateRq.sourceCode
+            status = Status.RUNNING
+        }.apply {
+            if (existingResults != null) {
                 attempt = existingResults.attempt + 1
-                status = Status.RUNNING
-            }).id ?: throw IllegalArgumentException("Bad id returned.")
-        } else {
-            taskResultsRepository.save(TaskResults().apply {
-                taskId = Task(taskResultsCreateRq.taskId?.id)
-                userId = User(taskResultsCreateRq.userId?.id)
-                language = taskResultsCreateRq.language
-                sourceCode = taskResultsCreateRq.sourceCode
-                status = Status.RUNNING
-            }).id ?: throw IllegalArgumentException("Bad id returned.")
-        }
+            }
+        }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         rabbitTemplate.convertSendAndReceive(
                 "program",
