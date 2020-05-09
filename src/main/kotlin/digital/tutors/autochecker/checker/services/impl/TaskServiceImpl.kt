@@ -54,6 +54,7 @@ class TaskServiceImpl : TaskService {
             level = taskCreateRq.level
             description = taskCreateRq.description
             options = taskCreateRq.options
+            title = taskCreateRq.title
             tests = taskCreateRq.tests
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
@@ -69,6 +70,7 @@ class TaskServiceImpl : TaskService {
             level = taskUpdateRq.level
             description = taskUpdateRq.description
             options = taskUpdateRq.options
+            title = taskUpdateRq.title
             tests = taskUpdateRq.tests
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 

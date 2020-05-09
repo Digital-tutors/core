@@ -15,6 +15,7 @@ data class TaskVO(
         val contributors: List<UserVO>?,
         val options: Options?,
         val tests: Test?,
+        val title: String?,
         val level: Level?
 ) {
 
@@ -31,6 +32,7 @@ data class TaskVO(
                             input = input?.slice(0..0)
                             output = output?.slice(0..0)
                         },
+                        task.title,
                         task.level
                 )
     }

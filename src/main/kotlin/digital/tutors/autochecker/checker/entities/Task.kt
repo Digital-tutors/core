@@ -21,7 +21,8 @@ data class Task(
         var level: Level? = Level.JUNIOR,
         var description: String? = null,
         var options: Options? = null,
-        var tests: Test? = null
+        var tests: Test? = null,
+        var title: String? = null
 ) : AuditableEntity()
 
 enum class Level {

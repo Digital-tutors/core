@@ -15,6 +15,7 @@ data class TaskAdminVO(
         val contributors: List<UserVO>?,
         val options: Options?,
         val tests: Test?,
+        val title: String?,
         val level: Level?
 ) {
 
@@ -28,6 +29,7 @@ data class TaskAdminVO(
                         task.contributors?.map { UserVO.fromData(it, null) },
                         task.options,
                         task.tests,
+                        task.title,
                         task.level
                 )
     }
