@@ -22,6 +22,8 @@ interface TopicService {
 
     fun subscribeTopic(id: String, userId: String)
 
+    fun unSubscribeTopic(id: String, userId: String)
+
     @Throws(EntityNotFoundException::class)
     fun updateTopic(id: String, topicUpdateRq: TopicUpdateRq): TopicVO
 

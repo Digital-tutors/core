@@ -86,6 +86,11 @@ class TopicController : BaseController() {
         ResponseEntity.ok(topicService.subscribeTopic(id, user))
     }
 
+    @DeleteMapping("/topic/{id}/user")
+    fun unSubscribeTopic(@PathVariable id: String): ResponseEntity<*> = processServiceExceptions {
+        ResponseEntity.ok(topicService.unSubscribeTopic(id, authorizationService.currentUserIdOrDie()))
+    }
+
     @DeleteMapping("/topic/{id}")
     fun deleteAdvantage(@PathVariable id: String): ResponseEntity<*> = processServiceExceptions {
         ResponseEntity.ok(topicService.delete(id))

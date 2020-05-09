@@ -66,7 +66,17 @@ class TopicServiceImpl : TopicService {
             followers = followers?.plus(user)?.distinct()
         }).id
 
-        log.debug("Updated followers entity $id")
+        log.debug("Updated followers entity $id with follower ${user.id}")
+    }
+
+    override fun unSubscribeTopic(id: String, userId: String) {
+        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+
+        topicRepository.save(topicRepository.findById(id).get().apply {
+            followers = followers?.minus(user)?.distinct()
+        }).id
+
+        log.debug("Delete followers entity $id with follower ${user.id}")
     }
 
     @Throws(EntityNotFoundException::class)
