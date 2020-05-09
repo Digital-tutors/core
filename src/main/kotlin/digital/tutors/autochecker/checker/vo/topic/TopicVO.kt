@@ -11,11 +11,12 @@ data class TopicVO(
         val followers: List<UserVO>?,
         val authorId: UserVO?,
         val contributors: List<UserVO>?,
-        val createdDate: String?
+        val createdDate: String?,
+        val isSubscribe: Boolean
 ) {
 
     companion object {
-        fun fromData(topic: Topic): TopicVO =
+        fun fromData(topic: Topic, userId: String?): TopicVO =
                 TopicVO(
                         topic.id,
                         topic.title,
@@ -23,7 +24,8 @@ data class TopicVO(
                         topic.followers?.map { UserVO.fromData(it, null) },
                         topic.authorId?.let { UserVO.fromData(it, null) },
                         topic.contributors?.map { UserVO.fromData(it, null) },
-                        topic.createdBy
+                        topic.createdBy,
+                        topic.followers?.any { it.id == userId } ?: false
                 )
     }
 

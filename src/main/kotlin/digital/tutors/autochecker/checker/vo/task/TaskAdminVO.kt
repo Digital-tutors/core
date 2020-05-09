@@ -23,7 +23,7 @@ data class TaskAdminVO(
         fun fromData(task: Task): TaskAdminVO =
                 TaskAdminVO(
                         task.id,
-                        task.topicId?.let { TopicVO.fromData(it) },
+                        task.topicId?.let { TopicVO.fromData(it, null) },
                         task.authorId?.let { UserVO.fromData(it, null) },
                         task.description,
                         task.contributors?.map { UserVO.fromData(it, null) },

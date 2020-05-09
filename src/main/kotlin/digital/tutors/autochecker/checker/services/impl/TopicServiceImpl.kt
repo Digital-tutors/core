@@ -10,6 +10,7 @@ import digital.tutors.autochecker.checker.services.TopicService
 import digital.tutors.autochecker.checker.vo.topic.TopicCreateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
+import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,6 +29,9 @@ class TopicServiceImpl : TopicService {
 
     @Autowired
     lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
 
     @Throws(EntityNotFoundException::class)
     override fun getSubscribedTopics(userId: String): List<TopicVO> {
@@ -85,7 +89,7 @@ class TopicServiceImpl : TopicService {
     }
 
     private fun toTopicVO(topic: Topic): TopicVO {
-        return TopicVO.fromData(topic)
+        return TopicVO.fromData(topic, authorizationService.currentUserIdOrDie())
     }
 
 }

@@ -9,12 +9,15 @@ import digital.tutors.autochecker.checker.vo.task.TaskUpdateRq
 import digital.tutors.autochecker.checker.vo.task.TaskVO
 import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.entities.Topic
+import digital.tutors.autochecker.checker.repositories.TaskResultsRepository
 import digital.tutors.autochecker.checker.vo.task.TaskAdminVO
+import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,6 +27,12 @@ class TaskServiceImpl : TaskService {
 
     @Autowired
     lateinit var taskRepository: TaskRepository
+
+    @Autowired
+    lateinit var taskResultsRepository: TaskResultsRepository
+
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
 
     @Throws(EntityNotFoundException::class)
     override fun getTasksByAuthorId(authorId: String): List<TaskVO> {
@@ -84,7 +93,12 @@ class TaskServiceImpl : TaskService {
     }
 
     private fun toTaskVO(task: Task): TaskVO {
-        return TaskVO.fromData(task)
+        val taskResults = taskResultsRepository.findFirstByUserIdAndTaskIdAndCompletedIsTrue(
+                User(id = authorizationService.currentUserIdOrDie()),
+                Task(id = task.id)
+        )
+
+        return TaskVO.fromData(task, authorizationService.currentUserIdOrDie(), taskResults?.completed != null)
     }
 
     private fun toTaskAdminVO(task: Task): TaskAdminVO {

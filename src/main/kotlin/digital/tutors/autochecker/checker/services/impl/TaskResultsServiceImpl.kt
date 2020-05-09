@@ -13,6 +13,7 @@ import digital.tutors.autochecker.checker.services.TaskResultsService
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsCreateMQ
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsCreateRq
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsVO
+import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -38,6 +39,9 @@ class TaskResultsServiceImpl : TaskResultsService {
 
     @Autowired
     lateinit var rabbitTemplate: RabbitTemplate
+
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
 
     private val mapper = jacksonObjectMapper()
 
@@ -108,7 +112,7 @@ class TaskResultsServiceImpl : TaskResultsService {
     }
 
     private fun toTaskResultsVO(taskResults: TaskResults): TaskResultsVO {
-        return TaskResultsVO.fromData(taskResults)
+        return TaskResultsVO.fromData(taskResults, authorizationService.currentUserIdOrDie())
     }
 
 }
