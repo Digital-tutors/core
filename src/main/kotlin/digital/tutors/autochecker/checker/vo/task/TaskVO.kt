@@ -19,10 +19,10 @@ data class TaskVO(
 ) {
 
     companion object {
-        fun fromData(task: Task): TaskVO =
+        fun fromData(task: Task, userId: String?): TaskVO =
                 TaskVO(
                         task.id,
-                        task.topicId?.let { TopicVO.fromData(it) },
+                        task.topicId?.let { TopicVO.fromData(it, userId) },
                         task.authorId?.let { UserVO.fromData(it, null) },
                         task.description,
                         task.contributors?.map { UserVO.fromData(it, null) },

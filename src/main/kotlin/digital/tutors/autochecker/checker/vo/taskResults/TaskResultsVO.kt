@@ -21,10 +21,10 @@ data class TaskResultsVO(
 ) {
 
     companion object {
-        fun fromData(taskResults: TaskResults): TaskResultsVO =
+        fun fromData(taskResults: TaskResults, userId: String?): TaskResultsVO =
                 TaskResultsVO(
                         taskResults.id,
-                        taskResults.taskId?.let { TaskVO.fromData(it) },
+                        taskResults.taskId?.let { TaskVO.fromData(it, userId) },
                         taskResults.userId?.let { UserVO.fromData(it, null) },
                         taskResults.language,
                         taskResults.completed,
