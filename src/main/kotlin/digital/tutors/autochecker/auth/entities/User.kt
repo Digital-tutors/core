@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 
+// TODO: Добавить отчество
+
 @Document
 data class User(
         @Id var id: String? = null,

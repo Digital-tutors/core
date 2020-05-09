@@ -15,11 +15,12 @@ data class TaskVO(
         val contributors: List<UserVO>?,
         val options: Options?,
         val tests: Test?,
-        val level: Level?
+        val level: Level?,
+        val isComplete: Boolean
 ) {
 
     companion object {
-        fun fromData(task: Task, userId: String?): TaskVO =
+        fun fromData(task: Task, userId: String?, isComplete: Boolean): TaskVO =
                 TaskVO(
                         task.id,
                         task.topicId?.let { TopicVO.fromData(it, userId) },
@@ -31,7 +32,8 @@ data class TaskVO(
                             input = input?.slice(0..0)
                             output = output?.slice(0..0)
                         },
-                        task.level
+                        task.level,
+                        isComplete
                 )
     }
 

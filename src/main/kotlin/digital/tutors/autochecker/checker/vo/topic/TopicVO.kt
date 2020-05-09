@@ -1,6 +1,5 @@
 package digital.tutors.autochecker.checker.vo.topic
 
-import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.vo.UserVO
 import digital.tutors.autochecker.checker.entities.AccessType
 import digital.tutors.autochecker.checker.entities.Topic
@@ -26,7 +25,7 @@ data class TopicVO(
                         topic.authorId?.let { UserVO.fromData(it, null) },
                         topic.contributors?.map { UserVO.fromData(it, null) },
                         topic.createdBy,
-                        topic.followers?.takeWhile { it.id == userId }?.isNotEmpty() ?: false
+                        topic.followers?.any { it.id == userId } ?: false
                 )
     }
 

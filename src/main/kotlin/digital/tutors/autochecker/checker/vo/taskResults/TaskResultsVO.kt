@@ -24,7 +24,7 @@ data class TaskResultsVO(
         fun fromData(taskResults: TaskResults, userId: String?): TaskResultsVO =
                 TaskResultsVO(
                         taskResults.id,
-                        taskResults.taskId?.let { TaskVO.fromData(it, userId) },
+                        taskResults.taskId?.let { TaskVO.fromData(it, userId, taskResults.completed) },
                         taskResults.userId?.let { UserVO.fromData(it, null) },
                         taskResults.language,
                         taskResults.completed,
