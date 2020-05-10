@@ -18,6 +18,9 @@ interface TopicService {
     @Throws(EntityNotFoundException::class)
     fun getPublicTopics(pageable: Pageable): Page<TopicVO>
 
+    @Throws(EntityNotFoundException::class)
+    fun getAllTopicsById(pageable: Pageable, id: String): Page<TopicVO>
+
     fun createTopic(topicCreateRq: TopicCreateRq): TopicVO
 
     fun subscribeTopic(id: String, userId: String)
