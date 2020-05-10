@@ -43,12 +43,13 @@ class TopicController : BaseController() {
     @GetMapping("/topics")
     fun getTopics(@RequestParam page: Int): ResponseEntity<Page<TopicVO>> = processServiceExceptions {
         /*
-        TODO: Получение тем с PUBLIС ключом
+        TODO: Получение тем с PUBLIС и PRIVATE ключом
          */
 
         try {
+            val id = authorizationService.currentUserIdOrDie()
             val pageRequest = PageRequest.of(page, 10)
-            ResponseEntity.ok(topicService.getPublicTopics(pageRequest))
+            ResponseEntity.ok(topicService.getAllTopicsById(pageRequest, id))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Topics Not Found", ex)

@@ -36,7 +36,6 @@ class TopicServiceImpl : TopicService {
     @Throws(EntityNotFoundException::class)
     override fun getSubscribedTopics(userId: String): List<TopicVO> {
         val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
-
         return topicRepository.findAllByFollowersContains(user).map(::toTopicVO)
     }
 
@@ -45,6 +44,12 @@ class TopicServiceImpl : TopicService {
 
     @Throws(EntityNotFoundException::class)
     override fun getPublicTopics(pageable: Pageable): Page<TopicVO> = topicRepository.findAllByAccessTypeEquals(AccessType.PUBLIC, pageable).map(::toTopicVO)
+
+    @Throws(EntityNotFoundException::class)
+    override fun getAllTopicsById(pageable: Pageable, id: String): Page<TopicVO> {
+        val user = userRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("User with $id not found.")
+        return topicRepository.findAllByAccessTypeEqualsOrFollowersContains(AccessType.PUBLIC, user, pageable).map(::toTopicVO)
+    }
 
     override fun createTopic(topicCreateRq: TopicCreateRq): TopicVO {
         val id = topicRepository.save(Topic().apply {
