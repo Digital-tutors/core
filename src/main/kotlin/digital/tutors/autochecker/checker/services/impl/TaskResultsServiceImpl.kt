@@ -59,6 +59,13 @@ class TaskResultsServiceImpl : TaskResultsService {
     }
 
     @Throws(EntityNotFoundException::class)
+    override fun getTaskResultsByUser(userId: String): List<TaskResultsVO> {
+        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+
+        return taskResultsRepository.findAllByUserId(user).map(::toTaskResultsVO)
+    }
+
+    @Throws(EntityNotFoundException::class)
     override fun getTaskResultsByTopicId(taskId: String): List<TaskResultsVO> {
         return taskResultsRepository.findAllByTaskId(Task(id = taskId)).map(::toTaskResultsVO)
     }

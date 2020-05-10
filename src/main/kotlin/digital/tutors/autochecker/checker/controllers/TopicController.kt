@@ -1,7 +1,5 @@
 package digital.tutors.autochecker.checker.controllers
 
-import digital.tutors.autochecker.auth.services.UserService
-import digital.tutors.autochecker.checker.entities.AccessType
 import digital.tutors.autochecker.checker.services.TopicService
 import digital.tutors.autochecker.checker.vo.topic.TopicCreateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq

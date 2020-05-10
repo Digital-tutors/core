@@ -7,6 +7,7 @@ import digital.tutors.autochecker.checker.vo.task.TaskUpdateRq
 import digital.tutors.autochecker.checker.vo.task.TaskVO
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsCreateRq
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsVO
+import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.controller.BaseController
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +24,9 @@ class TaskResultsController: BaseController() {
 
     @Autowired
     lateinit var taskResultsService: TaskResultsService
+
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
 
     @GetMapping("/decisions")
     fun getDecisions(@RequestParam page: Int): ResponseEntity<Page<TaskResultsVO>> = processServiceExceptions {
@@ -44,10 +48,19 @@ class TaskResultsController: BaseController() {
         }
     }
 
-    @GetMapping("/user/{user}/task/{task}/decisions")
-    fun getTasksByUserAndTask(@PathVariable user: String, @PathVariable task: String): ResponseEntity<List<TaskResultsVO>> = processServiceExceptions {
+    @GetMapping("/task/{task}/decisions")
+    fun getTasksByUserAndTask(@PathVariable task: String): ResponseEntity<List<TaskResultsVO>> = processServiceExceptions {
         try {
-            ResponseEntity.ok(taskResultsService.getTaskResultsByUserAndTask(user, task))
+            ResponseEntity.ok(taskResultsService.getTaskResultsByUserAndTask(authorizationService.currentUserIdOrDie(), task))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decisions for user with topic Not Found", ex)
+        }
+    }
+
+    @GetMapping("/user/decisions")
+    fun getDecisionsByUser(): ResponseEntity<List<TaskResultsVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(taskResultsService.getTaskResultsByUser(authorizationService.currentUserIdOrDie()))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decisions for user with topic Not Found", ex)
         }
