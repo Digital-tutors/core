@@ -1,5 +1,7 @@
 package digital.tutors.autochecker.checker.controllers
 
+import digital.tutors.autochecker.auth.services.UserService
+import digital.tutors.autochecker.checker.entities.AccessType
 import digital.tutors.autochecker.checker.services.TopicService
 import digital.tutors.autochecker.checker.vo.topic.TopicCreateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq
@@ -29,6 +31,9 @@ class TopicController : BaseController() {
 
     @Autowired
     lateinit var authorizationService: AuthorizationService
+
+    @Autowired
+    lateinit var userService: UserService
 
     @GetMapping("/user/{user}/topics")
     fun getSubscribedTopics(@PathVariable user: String): ResponseEntity<List<TopicVO>> = processServiceExceptions {
@@ -61,6 +66,14 @@ class TopicController : BaseController() {
 
         println(authorizationService.currentUserIdOrDie())
         try {
+
+            val idUser = authorizationService.currentUserIdOrDie()
+            val currentTopic = topicService.getTopicByIdOrThrow(id)
+
+            if (currentTopic.accessType == AccessType.PRIVATE)
+                if (!currentTopic.followers?.contains(userService.getUserByIdOrThrow(idUser))!!)
+                        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Topic Not Found")
+
             ResponseEntity.ok(topicService.getTopicByIdOrThrow(id))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(
