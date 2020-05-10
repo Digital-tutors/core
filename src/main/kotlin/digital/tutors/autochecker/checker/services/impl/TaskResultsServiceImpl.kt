@@ -52,21 +52,39 @@ class TaskResultsServiceImpl : TaskResultsService {
 
     @Throws(EntityNotFoundException::class)
     override fun getTaskResultsByUserAndTask(userId: String, taskId: String): List<TaskResultsVO> {
-        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
-        val task = taskRepository.findByIdOrNull(taskId) ?: throw EntityNotFoundException("Task with $taskId not found.")
+        val user = userRepository.findByIdOrNull(userId)
+                ?: throw EntityNotFoundException("User with $userId not found.")
+        val task = taskRepository.findByIdOrNull(taskId)
+                ?: throw EntityNotFoundException("Task with $taskId not found.")
 
-        return taskResultsRepository.findAllByUserIdAndTaskId(user, task).map(::toTaskResultsVO)
+        val taskResults = taskResultsRepository.findAllByUserIdAndTaskIdOrderByCreatedDtDesc(user, task)
+
+        val taskResultsArray = mutableListOf<TaskResults>()
+        taskResults.groupBy { it.language }.toList().forEach { (_, taskResult) ->
+            taskResult.sortedByDescending { it.attempt }
+            taskResultsArray.addAll(taskResult)
+        }
+
+        return taskResultsArray.map(::toTaskResultsVO)
     }
 
     @Throws(EntityNotFoundException::class)
     override fun getTaskResultsByUser(userId: String): List<TaskResultsVO> {
-        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+        val user = userRepository.findByIdOrNull(userId)
+                ?: throw EntityNotFoundException("User with $userId not found.")
+        val taskResults = taskResultsRepository.findAllByUserIdOrderByCreatedDtDesc(user)
 
-        return taskResultsRepository.findAllByUserId(user).map(::toTaskResultsVO)
+        val taskResultsArray = mutableListOf<TaskResults>()
+        taskResults.groupBy { it.language }.toList().forEach { (_, taskResult) ->
+            taskResult.sortedByDescending { it.attempt }
+            taskResultsArray.addAll(taskResult)
+        }
+
+        return taskResultsArray.map(::toTaskResultsVO)
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTaskResultsByTopicId(taskId: String): List<TaskResultsVO> {
+    override fun getTaskResultsByTaskId(taskId: String): List<TaskResultsVO> {
         return taskResultsRepository.findAllByTaskId(Task(id = taskId)).map(::toTaskResultsVO)
     }
 
