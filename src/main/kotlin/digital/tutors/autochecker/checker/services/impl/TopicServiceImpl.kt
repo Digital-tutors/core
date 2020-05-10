@@ -49,7 +49,7 @@ class TopicServiceImpl : TopicService {
                 ?: throw EntityNotFoundException("User with $id not found.")
         val topic = topicRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("Topic with $id not found.")
 
-        if (!topic.followers?.contains(user)!!)
+        if (topic.accessType == AccessType.PRIVATE && !topic.followers?.contains(user)!!)
             throw PermissionDeniedException("Permission denied for private topic")
         return toTopicVO(topic)
     }

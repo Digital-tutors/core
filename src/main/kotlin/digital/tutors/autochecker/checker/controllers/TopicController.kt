@@ -32,13 +32,10 @@ class TopicController : BaseController() {
     @Autowired
     lateinit var authorizationService: AuthorizationService
 
-    @Autowired
-    lateinit var userService: UserService
-
-    @GetMapping("/user/{user}/topics")
-    fun getSubscribedTopics(@PathVariable user: String): ResponseEntity<List<TopicVO>> = processServiceExceptions {
+    @GetMapping("/user/topics")
+    fun getSubscribedTopics(): ResponseEntity<List<TopicVO>> = processServiceExceptions {
         try {
-            ResponseEntity.ok(topicService.getSubscribedTopics(user))
+            ResponseEntity.ok(topicService.getSubscribedTopics(authorizationService.currentUserIdOrDie()))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Subscribed topics Not Found", ex)
