@@ -63,17 +63,7 @@ class TopicController : BaseController() {
 
     @GetMapping("/topic/{id}")
     fun getTopicById(@PathVariable id: String): ResponseEntity<TopicVO> = processServiceExceptions {
-
-        println(authorizationService.currentUserIdOrDie())
         try {
-
-            val idUser = authorizationService.currentUserIdOrDie()
-            val currentTopic = topicService.getTopicByIdOrThrow(id)
-
-            if (currentTopic.accessType == AccessType.PRIVATE)
-                if (!currentTopic.followers?.contains(userService.getUserByIdOrThrow(idUser))!!)
-                        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Topic Not Found")
-
             ResponseEntity.ok(topicService.getTopicByIdOrThrow(id))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(

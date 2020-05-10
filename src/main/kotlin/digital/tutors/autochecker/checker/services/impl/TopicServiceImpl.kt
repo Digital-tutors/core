@@ -12,12 +12,15 @@ import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicVO
 import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import digital.tutors.autochecker.core.exception.PermissionDeniedException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 
 @Service
 class TopicServiceImpl : TopicService {
@@ -35,12 +38,21 @@ class TopicServiceImpl : TopicService {
 
     @Throws(EntityNotFoundException::class)
     override fun getSubscribedTopics(userId: String): List<TopicVO> {
-        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+        val user = userRepository.findByIdOrNull(userId)
+                ?: throw EntityNotFoundException("User with $userId not found.")
         return topicRepository.findAllByFollowersContains(user).map(::toTopicVO)
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTopicByIdOrThrow(id: String): TopicVO = topicRepository.findById(id).map(::toTopicVO).orElseThrow { throw EntityNotFoundException("Topic with $id not found.") }
+    override fun getTopicByIdOrThrow(id: String): TopicVO {
+        val user = userRepository.findByIdOrNull(authorizationService.currentUserIdOrDie())
+                ?: throw EntityNotFoundException("User with $id not found.")
+        val topic = topicRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("Topic with $id not found.")
+
+        if (!topic.followers?.contains(user)!!)
+            throw PermissionDeniedException("Permission denied for private topic")
+        return toTopicVO(topic)
+    }
 
     @Throws(EntityNotFoundException::class)
     override fun getPublicTopics(pageable: Pageable): Page<TopicVO> = topicRepository.findAllByAccessTypeEquals(AccessType.PUBLIC, pageable).map(::toTopicVO)
@@ -65,7 +77,8 @@ class TopicServiceImpl : TopicService {
     }
 
     override fun subscribeTopic(id: String, userId: String) {
-        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+        val user = userRepository.findByIdOrNull(userId)
+                ?: throw EntityNotFoundException("User with $userId not found.")
 
         topicRepository.save(topicRepository.findById(id).get().apply {
             followers = followers?.plus(user)?.distinct()
@@ -75,7 +88,8 @@ class TopicServiceImpl : TopicService {
     }
 
     override fun unSubscribeTopic(id: String, userId: String) {
-        val user = userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found.")
+        val user = userRepository.findByIdOrNull(userId)
+                ?: throw EntityNotFoundException("User with $userId not found.")
 
         topicRepository.save(topicRepository.findById(id).get().apply {
             followers = followers?.minus(user)?.distinct()

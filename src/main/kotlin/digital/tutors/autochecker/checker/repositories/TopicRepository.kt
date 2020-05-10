@@ -13,6 +13,6 @@ interface TopicRepository : MongoRepository<Topic, String> {
     fun findAllByAccessTypeEquals(accessType: AccessType, pageable: Pageable): Page<Topic>
     fun findAllByAccessTypeEqualsOrFollowersContains(AccessType: AccessType, followers: User, pageable: Pageable): Page<Topic>
     fun findAllByFollowersContains(followers: User): List<Topic>
-
+    fun findFirstByIdAndAccessTypeOrFollowers(id: String, AccessType: AccessType, followers: User): Topic
 
 }
