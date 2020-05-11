@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 class TopicServiceImpl : TopicService {
@@ -55,6 +53,11 @@ class TopicServiceImpl : TopicService {
     }
 
     @Throws(EntityNotFoundException::class)
+    override fun getTopicByIdWithoutUserOrThrow(id: String): TopicVO {
+        return topicRepository.findById(id).map(::toTopicVO).orElseThrow { throw EntityNotFoundException("Topic with $id not found.") }
+    }
+
+    @Throws(EntityNotFoundException::class)
     override fun getPublicTopics(pageable: Pageable): Page<TopicVO> = topicRepository.findAllByAccessTypeEquals(AccessType.PUBLIC, pageable).map(::toTopicVO)
 
     @Throws(EntityNotFoundException::class)
@@ -73,7 +76,7 @@ class TopicServiceImpl : TopicService {
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Created entity $id")
-        return getTopicByIdOrThrow(id)
+        return getTopicByIdWithoutUserOrThrow(id)
     }
 
     override fun subscribeTopic(id: String, userId: String) {
@@ -108,7 +111,7 @@ class TopicServiceImpl : TopicService {
         }).id
 
         log.debug("Updated entity $id")
-        return getTopicByIdOrThrow(id)
+        return getTopicByIdWithoutUserOrThrow(id)
     }
 
     @Throws(EntityNotFoundException::class)
