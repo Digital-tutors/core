@@ -57,6 +57,11 @@ class UserServiceImpl(
         log.debug("Deleted page $id")
     }
 
+    override fun existsByEmail(email: String): Boolean {
+        if (userRepository.existsByEmail(email)) return true
+        return false
+    }
+
     private fun toUserVO(user: User): UserVO {
         return UserVO.fromData(user, null)
     }

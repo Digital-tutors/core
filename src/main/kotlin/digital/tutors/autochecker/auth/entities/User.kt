@@ -2,9 +2,15 @@ package digital.tutors.autochecker.auth.entities
 
 import digital.tutors.autochecker.checker.entities.Topic
 import digital.tutors.autochecker.core.entity.AuditableEntity
+import org.hibernate.validator.constraints.UniqueElements
+import org.springframework.context.annotation.Primary
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.core.mapping.Field
+import org.springframework.security.access.annotation.Secured
+import java.lang.annotation.ElementType
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 
@@ -14,10 +20,11 @@ import javax.validation.constraints.Size
 data class User(
         @Id var id: String? = null,
 
+
         @get:Email
         var email: String? = null,
 
-        @get:Size(min = 6)
+        @get:Size(min = 8, max = 180)
         var password: String? = null,
 
         @get:Size(min = 1, max = 20)
