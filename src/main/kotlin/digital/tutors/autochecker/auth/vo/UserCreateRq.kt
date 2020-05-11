@@ -1,8 +1,6 @@
 package digital.tutors.autochecker.auth.vo
 
 
-import org.hibernate.validator.constraints.UniqueElements
-import org.springframework.data.mongodb.core.index.Indexed
 import javax.validation.constraints.*
 
 data class UserCreateRq(

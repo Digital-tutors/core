@@ -2,15 +2,9 @@ package digital.tutors.autochecker.auth.entities
 
 import digital.tutors.autochecker.checker.entities.Topic
 import digital.tutors.autochecker.core.entity.AuditableEntity
-import org.hibernate.validator.constraints.UniqueElements
-import org.springframework.context.annotation.Primary
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.core.mapping.Field
-import org.springframework.security.access.annotation.Secured
-import java.lang.annotation.ElementType
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 
