@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
@@ -34,6 +35,17 @@ class TopicController : BaseController() {
     fun getSubscribedTopics(): ResponseEntity<List<TopicVO>> = processServiceExceptions {
         try {
             ResponseEntity.ok(topicService.getSubscribedTopics(authorizationService.currentUserIdOrDie()))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Subscribed topics Not Found", ex)
+        }
+    }
+
+    @PreAuthorize("hasRole(\"TEACHER\")")
+    @GetMapping("/teacher/topics")
+    fun getMyTopics(): ResponseEntity<List<TopicVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(topicService.getTeacherTopics(authorizationService.currentUserIdOrDie()))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Subscribed topics Not Found", ex)

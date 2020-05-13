@@ -1,5 +1,6 @@
 package digital.tutors.autochecker.checker.services.impl
 
+import digital.tutors.autochecker.auth.entities.Roles
 import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.repositories.UserRepository
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
@@ -42,12 +43,20 @@ class TopicServiceImpl : TopicService {
     }
 
     @Throws(EntityNotFoundException::class)
+    override fun getTeacherTopics(userId: String): List<TopicVO> {
+        val user = userRepository.findByIdOrNull(userId)
+                ?: throw EntityNotFoundException("User with $userId not found.")
+
+        return topicRepository.findAllByAuthorIdOrContributorsContains(user, user).map(::toTopicVO)
+    }
+
+    @Throws(EntityNotFoundException::class)
     override fun getTopicByIdOrThrow(id: String): TopicVO {
         val user = userRepository.findByIdOrNull(authorizationService.currentUserIdOrDie())
                 ?: throw EntityNotFoundException("User with $id not found.")
         val topic = topicRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("Topic with $id not found.")
 
-        if (topic.accessType == AccessType.PRIVATE && !topic.followers?.contains(user)!!)
+        if (topic.accessType == AccessType.PRIVATE && !topic.followers?.contains(user)!! && user.role == Roles.ROLE_USER)
             throw PermissionDeniedException("Permission denied for private topic")
         return toTopicVO(topic)
     }

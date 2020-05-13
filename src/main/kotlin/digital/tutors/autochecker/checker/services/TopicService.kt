@@ -13,6 +13,9 @@ interface TopicService {
     fun getSubscribedTopics(userId: String): List<TopicVO>
 
     @Throws(EntityNotFoundException::class)
+    fun getTeacherTopics(userId: String): List<TopicVO>
+
+    @Throws(EntityNotFoundException::class)
     fun getTopicByIdOrThrow(id: String): TopicVO
 
     @Throws(EntityNotFoundException::class)
