@@ -22,6 +22,5 @@ data class PeerTaskSolution(
         var sourceCode: String? = null,
         var attempt: Int = 0,
         var status: PeerTaskResultsStatus = PeerTaskResultsStatus.NOT_CHECKING,
-        var createdAt: Date = Date(0),
-        var updatedAt: Date = Date(0)
+        var createdAt: Date = Date(0)
 ): AuditableEntity()

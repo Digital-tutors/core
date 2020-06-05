@@ -4,12 +4,13 @@ import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.checker.entities.Level
 import digital.tutors.autochecker.checker.entities.Options
 import digital.tutors.autochecker.checker.entities.Topic
+import digital.tutors.autochecker.core.entity.EntityRefRq
 
 
 data class PeerTaskCreateRq(
-        var topicId: Topic? = null,
-        var authorId: User? = null,
-        var contributors: List<User>? = null,
+        var topicId: EntityRefRq? = null,
+        var authorId: EntityRefRq? = null,
+        var contributors: List<EntityRefRq>? = null,
         var level: Level?,
         var description: String?,
         var title: String?,
