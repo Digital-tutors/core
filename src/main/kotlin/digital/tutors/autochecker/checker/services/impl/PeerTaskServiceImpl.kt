@@ -1,14 +1,19 @@
 package digital.tutors.autochecker.checker.services.impl
 
+import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
 import digital.tutors.autochecker.checker.services.PeerTaskService
 import digital.tutors.autochecker.checker.vo.peerTask.PeerTaskAdminVO
 import digital.tutors.autochecker.checker.vo.peerTask.PeerTaskCreateRq
 import digital.tutors.autochecker.checker.vo.peerTask.PeerTaskUpdateRq
 import digital.tutors.autochecker.checker.vo.peerTask.PeerTaskVO
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class PeerTaskServiceImpl: PeerTaskService {
+
+    private val log = LoggerFactory.getLogger(UserServiceImpl::class.java)
+
     override fun getPeerTasksByAuthorId(authorId: String): List<PeerTaskVO> {
         TODO("Not yet implemented")
     }

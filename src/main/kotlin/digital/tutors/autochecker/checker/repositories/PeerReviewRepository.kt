@@ -7,6 +7,7 @@ import digital.tutors.autochecker.checker.entities.PeerTaskSolution
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface PeerReviewRepository : MongoRepository<PeerReview, String> {
+
     fun findAllByStudentId(studentId: User): List<PeerReview>
     fun findAllByExpertId(expertId: User): List<PeerReview>
     fun findAllBySolutionId(solutionId: PeerTaskSolution): List<PeerReview>
