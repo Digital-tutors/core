@@ -34,5 +34,4 @@ interface TaskService {
     @Throws(EntityNotFoundException::class)
     fun delete(id: String)
 
-
 }
