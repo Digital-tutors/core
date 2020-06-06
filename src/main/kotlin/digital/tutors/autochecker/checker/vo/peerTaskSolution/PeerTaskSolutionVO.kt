@@ -21,10 +21,10 @@ data class PeerTaskSolutionVO(
         var createdAt: Date
 ){
     companion object {
-        fun fromData(taskSolution: PeerTaskSolution, userId: String?, isCompleted: Boolean): PeerTaskSolutionVO =
+        fun fromData(taskSolution: PeerTaskSolution, userId: String?) : PeerTaskSolutionVO =
                 PeerTaskSolutionVO(
                         taskSolution.id,
-                        taskSolution.taskId?.let { PeerTaskVO.fromData (it, userId, isCompleted) },
+                        taskSolution.taskId?.let { PeerTaskVO.fromData (it, userId, it.isCompleted) },
                         taskSolution.userId?.let { UserVO.fromData(it, null) },
                         taskSolution.language,
                         taskSolution.sourceCode,

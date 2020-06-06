@@ -21,15 +21,6 @@ interface PeerTaskSolutionService {
     fun getPeerTaskSolutionsByTaskId(taskId: String): List<PeerTaskSolutionVO>
 
     @Throws(EntityNotFoundException::class)
-    fun getFirstPeerTaskSolutionByUserAndTask(userId: String, taskId: String): PeerTaskSolutionVO
-
-    @Throws(EntityNotFoundException::class)
-    fun getFirstPeerTaskSolutionByUser(userId: String): PeerTaskSolutionVO
-
-    @Throws(EntityNotFoundException::class)
-    fun getFirstPeerTaskSolutionByTaskId(taskId: String): PeerTaskSolutionVO
-
-    @Throws(EntityNotFoundException::class)
     fun getPeerTaskSolutionByIdOrThrow(id: String): PeerTaskSolutionVO
 
     @Throws(EntityNotFoundException::class)

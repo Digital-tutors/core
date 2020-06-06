@@ -24,13 +24,13 @@ data class PeerReviewVO (
         var updatedAt: Date
 ) {
     companion object {
-        fun fromData(peerReview: PeerReview, userId: String?, isCompleted: Boolean): PeerReviewVO =
+        fun fromData(peerReview: PeerReview, userId: String?): PeerReviewVO =
                 PeerReviewVO(
                         peerReview.id,
-                        peerReview.taskId?.let { PeerTaskVO.fromData(it, userId, isCompleted) },
+                        peerReview.taskId?.let { PeerTaskVO.fromData(it, userId, it.isCompleted) },
                         peerReview.studentId?.let { UserVO.fromData(it, null) },
                         peerReview.expertId?.let { UserVO.fromData (it, null) },
-                        peerReview.solutionId?.let { PeerTaskSolutionVO.fromData(it, null, isCompleted) },
+                        peerReview.solutionId?.let { PeerTaskSolutionVO.fromData(it, null) },
                         peerReview.gradesPerCriterions,
                         peerReview.argumentsPerCriterions,
                         peerReview.summaryMessagePerSolution,

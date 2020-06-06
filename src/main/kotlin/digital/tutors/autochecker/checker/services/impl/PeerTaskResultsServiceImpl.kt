@@ -1,41 +1,91 @@
 package digital.tutors.autochecker.checker.services.impl
 
+import digital.tutors.autochecker.auth.entities.User
+import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
+import digital.tutors.autochecker.checker.entities.PeerReview
+import digital.tutors.autochecker.checker.entities.PeerTask
+import digital.tutors.autochecker.checker.entities.PeerTaskResults
+import digital.tutors.autochecker.checker.repositories.PeerTaskResultsRepository
 import digital.tutors.autochecker.checker.services.PeerTaskResultsService
 import digital.tutors.autochecker.checker.vo.peerTaskResults.PeerTaskResultsCreateRq
+import digital.tutors.autochecker.checker.vo.peerTaskResults.PeerTaskResultsUpdateRq
 import digital.tutors.autochecker.checker.vo.peerTaskResults.PeerTaskResultsVO
+import digital.tutors.autochecker.core.auth.AuthorizationService
+import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.util.*
 
 class PeerTaskResultsServiceImpl: PeerTaskResultsService {
-    override fun getPeerTaskResultsByAuthorId(authorId: String): List<PeerTaskResultsVO> {
-        TODO("Not yet implemented")
-    }
 
+    private val log = LoggerFactory.getLogger(UserServiceImpl::class.java)
+
+    @Autowired
+    lateinit var peerTaskResultsRepository: PeerTaskResultsRepository
+
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
+
+    @Throws(EntityNotFoundException::class)
     override fun getPeerTaskResultsByUserAndTask(userId: String, taskId: String): List<PeerTaskResultsVO> {
-        TODO("Not yet implemented")
+        return peerTaskResultsRepository.findAllByStudentIdAndTaskId(User(id = userId), PeerTask(id = taskId)).map(::toPeerTaskResultsVO)
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun getPeerTaskResultsByUser(userId: String): List<PeerTaskResultsVO> {
-        TODO("Not yet implemented")
+        return peerTaskResultsRepository.findAllByStudentId(User(id = userId)).map(::toPeerTaskResultsVO)
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun getPeerTaskResultsByTaskId(taskId: String): List<PeerTaskResultsVO> {
-        TODO("Not yet implemented")
+        return  peerTaskResultsRepository.findAllByTaskId(PeerTask(id = taskId)).map(::toPeerTaskResultsVO)
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun getPeerTaskResultsByIdOrThrow(id: String): PeerTaskResultsVO {
-        TODO("Not yet implemented")
+        return peerTaskResultsRepository.findById(id).map(::toPeerTaskResultsVO).orElseThrow { throw EntityNotFoundException("Task results with $id not found") }
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun getPeerTaskResults(pageable: Pageable): Page<PeerTaskResultsVO> {
-        TODO("Not yet implemented")
+        return peerTaskResultsRepository.findAll(pageable).map(::toPeerTaskResultsVO)
     }
 
-    override fun savePeerTaskResults(peerTaskResultsCreateRq: PeerTaskResultsCreateRq): PeerTaskResultsVO {
-        TODO("Not yet implemented")
+    @Throws(EntityNotFoundException::class)
+    override fun createPeerTaskResults(peerTaskResultsCreateRq: PeerTaskResultsCreateRq): PeerTaskResultsVO {
+        val id = peerTaskResultsRepository.save(PeerTaskResults().apply {
+            taskId = PeerTask(id = peerTaskResultsCreateRq.taskId?.id)
+            studentId = User(id = peerTaskResultsCreateRq.studentId?.id)
+            receivedReviews = peerTaskResultsCreateRq.receivedReviews?.map { PeerReview(id = it.id) }
+            postedReviews = peerTaskResultsCreateRq.receivedReviews?.map { PeerReview(id = it.id) }
+            grade = peerTaskResultsCreateRq.grade
+            completed = peerTaskResultsCreateRq.completed
+            status = peerTaskResultsCreateRq.status
+        }).id ?: throw IllegalArgumentException("Bad id returned.")
+
+        TODO("DATE")
+        log.debug("Created entity $id")
+        return getPeerTaskResultsByIdOrThrow(id)
     }
 
-    override fun delete(id: String) {
-        TODO("Not yet implemented")
+    @Throws(EntityNotFoundException::class)
+    override fun updatePeerTaskResults(id: String, peerTaskResultsUpdateRq: PeerTaskResultsUpdateRq): PeerTaskResultsVO {
+        peerTaskResultsRepository.save(peerTaskResultsRepository.findById(id).get().apply {
+            receivedReviews = peerTaskResultsUpdateRq.receivedReviews?.map { PeerReview(id = it.id) }
+            postedReviews = peerTaskResultsUpdateRq.postedReviews?.map { PeerReview(id = it.id) }
+            grade = peerTaskResultsUpdateRq.grade
+            completed = peerTaskResultsUpdateRq.completed
+            status = peerTaskResultsUpdateRq.status
+        }).id ?: throw IllegalArgumentException("Bad id returned.")
+
+        TODO("DATE")
+        log.debug("Created entity $id")
+        return getPeerTaskResultsByIdOrThrow(id)
+    }
+
+    private fun toPeerTaskResultsVO(peerTaskResults: PeerTaskResults): PeerTaskResultsVO {
+        return PeerTaskResultsVO.fromData(peerTaskResults, authorizationService.currentUserIdOrDie(), peerTaskResults.completed)
     }
 }

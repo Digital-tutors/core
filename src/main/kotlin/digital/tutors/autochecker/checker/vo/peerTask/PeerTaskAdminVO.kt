@@ -16,7 +16,8 @@ data class PeerTaskAdminVO (
         val title: String?,
         val level: Level?,
         var criterions: List<String>? = null,
-        var maxGradesPerCriterions: List<Int>? = null
+        var maxGradesPerCriterions: List<Int>? = null,
+        var isCompleted: Boolean = false
 ) {
     companion object {
         fun fromData(task: PeerTask): PeerTaskAdminVO =
@@ -30,7 +31,8 @@ data class PeerTaskAdminVO (
                         task.title,
                         task.level,
                         task.criterions,
-                        task.maxGradesPerCriterions
+                        task.maxGradesPerCriterions,
+                        task.isCompleted
                 )
     }
 }

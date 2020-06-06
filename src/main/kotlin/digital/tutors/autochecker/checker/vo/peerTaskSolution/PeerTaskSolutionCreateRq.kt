@@ -7,7 +7,6 @@ import digital.tutors.autochecker.core.entity.EntityRefRq
 import java.util.*
 
 data class PeerTaskSolutionCreateRq(
-        var id: String?,
         var taskId: EntityRefRq?,
         var userId: EntityRefRq?,
         var language: String?,

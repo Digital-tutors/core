@@ -22,7 +22,7 @@ data class PeerTaskVO (
         val isComplete: Boolean
 ) {
     companion object {
-        fun fromData(peerTask: PeerTask, userId: String?, isComplete: Boolean): PeerTaskVO =
+        fun fromData(peerTask: PeerTask, userId: String?, isCompleted: Boolean): PeerTaskVO =
             PeerTaskVO(
                     peerTask.id,
                     peerTask.topicId?.let { TopicVO.fromData(it, userId) },
@@ -34,7 +34,7 @@ data class PeerTaskVO (
                     peerTask.level,
                     peerTask.criterions,
                     peerTask.maxGradesPerCriterions,
-                    isComplete
+                    isCompleted
             )
     }
 }

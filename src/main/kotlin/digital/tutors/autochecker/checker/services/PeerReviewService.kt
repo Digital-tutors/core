@@ -33,6 +33,4 @@ interface PeerReviewService {
     @Throws(EntityNotFoundException::class)
     fun updatePeerReview(id: String, peerReviewUpdateRq: PeerReviewUpdateRq): PeerReviewVO
 
-    @Throws(EntityNotFoundException::class)
-    fun delete(id: String)
 }
