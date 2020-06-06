@@ -16,8 +16,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 import java.util.*
 
+@Service
 class PeerReviewServiceImpl: PeerReviewService {
 
     private val log = LoggerFactory.getLogger(UserServiceImpl::class.java)
