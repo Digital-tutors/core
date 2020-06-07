@@ -1,10 +1,20 @@
 package digital.tutors.autochecker.reviewer.controllers
 
+import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsCreateRq
+import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsVO
+import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.reviewer.services.PeerTaskResultsService
 import digital.tutors.autochecker.core.controller.BaseController
+import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsCreateRq
+import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsVO
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping
@@ -13,6 +23,59 @@ class PeerResultsController: BaseController() {
     @Autowired
     lateinit var peerTaskResultsService: PeerTaskResultsService
 
+    @Autowired
+    lateinit var authorizationService: AuthorizationService
 
+    @GetMapping("/peer/decisions")
+    fun getDecisions(@RequestParam page: Int): ResponseEntity<Page<PeerTaskResultsVO>> = processServiceExceptions {
+        try {
+            val pageRequest = PageRequest.of(page,10);
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResults(pageRequest))
+        }
+        catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results Not Found", ex)
+        }
+    }
+
+    @GetMapping("/author/{id}/peer/decisions")
+    fun getTasksByAuthorId(@PathVariable id: String): ResponseEntity<List<PeerTaskResultsVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByUser(id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results Not Found", ex)
+        }
+    }
+
+    @GetMapping("/task/{task}/peer/decisions")
+    fun getTasksByUserAndTask(@PathVariable task: String): ResponseEntity<List<PeerTaskResultsVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByUserAndTask(authorizationService.currentUserIdOrDie(), task))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results for user with topic Not Found", ex)
+        }
+    }
+
+    @GetMapping("/user/decisions")
+    fun getDecisionsByUser(): ResponseEntity<List<PeerTaskResultsVO>> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByUser(authorizationService.currentUserIdOrDie()))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results for user with topic Not Found", ex)
+        }
+    }
+
+    @GetMapping("/peer/decision/{id}")
+    fun getDecisionById(@PathVariable id: String): ResponseEntity<PeerTaskResultsVO> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByIdOrThrow(id))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results Not Found", ex)
+        }
+    }
+
+    @PostMapping("/peer/decision")
+    fun saveDecision(@RequestBody taskResultsCreateRq: PeerTaskResultsCreateRq): ResponseEntity<PeerTaskResultsVO> = processServiceExceptions {
+        ResponseEntity.ok(peerTaskResultsService.createPeerTaskResults(taskResultsCreateRq))
+    }
 
 }
