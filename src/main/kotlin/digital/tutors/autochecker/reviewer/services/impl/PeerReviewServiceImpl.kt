@@ -70,7 +70,6 @@ class PeerReviewServiceImpl: PeerReviewService {
             gradesPerCriterions = peerReviewCreateRq.gradesPerCriterions
             summaryMessagePerSolution = peerReviewCreateRq.summaryMessagePerSolution
         }).id ?: throw IllegalArgumentException("Bad id returned.")
-        TODO("DATE")
         log.debug("Created entity $id")
         return getPeerReviewByIdOrThrow(id)
     }
@@ -82,7 +81,6 @@ class PeerReviewServiceImpl: PeerReviewService {
             argumentsPerCriterions = peerReviewUpdateRq.argumentsPerCriterions
             summaryMessagePerSolution = peerReviewUpdateRq.summaryMessagePerSolution
         }).id ?: throw IllegalArgumentException("Bad id returned.")
-        TODO("DATE")
         log.debug("Updated task entity $id")
         return getPeerReviewByIdOrThrow(id)
     }

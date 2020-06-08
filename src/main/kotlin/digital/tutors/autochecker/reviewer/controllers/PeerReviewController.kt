@@ -19,17 +19,17 @@ class PeerReviewController : BaseController() {
     @Autowired
     lateinit var peerReviewService: PeerReviewService
 
-    @PostMapping("/review/reviews")
+    @PostMapping("/review")
     fun createPeerReview(@RequestBody peerReviewCreateRq: PeerReviewCreateRq): ResponseEntity<PeerReviewVO> = processServiceExceptions {
         ResponseEntity.ok(peerReviewService.createPeerReview(peerReviewCreateRq))
     }
 
-    @PutMapping("/review/reviews/{id}")
+    @PutMapping("/reviews/{id}")
     fun updatePeerReview(@PathVariable id: String, @RequestBody peerReviewUpdateRq: PeerReviewUpdateRq): ResponseEntity<PeerReviewVO> = processServiceExceptions {
         ResponseEntity.ok(peerReviewService.updatePeerReview(id, peerReviewUpdateRq))
     }
 
-    @GetMapping("/review/reviews/expert/{id}")
+    @GetMapping("/reviews/expert/{id}")
     fun getPostedReviewsByUserId(@PathVariable id: String): ResponseEntity<List<PeerReviewVO>> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerReviewService.getPeerReviewsByExpertId(id))
@@ -38,7 +38,7 @@ class PeerReviewController : BaseController() {
         }
     }
 
-    @GetMapping("/review/reviews/student/{id}")
+    @GetMapping("/reviews/student/{id}")
     fun getReceivedReviewsByUserId(@PathVariable id: String): ResponseEntity<List<PeerReviewVO>> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerReviewService.getPeerReviewsByStudentId(id))

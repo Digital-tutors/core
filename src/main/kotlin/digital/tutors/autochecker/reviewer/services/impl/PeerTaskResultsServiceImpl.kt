@@ -66,7 +66,6 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
             status = peerTaskResultsCreateRq.status
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
-        TODO("DATE")
         log.debug("Created entity $id")
         return getPeerTaskResultsByIdOrThrow(id)
     }
@@ -81,7 +80,6 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
             status = peerTaskResultsUpdateRq.status
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
-        TODO("DATE")
         log.debug("Created entity $id")
         return getPeerTaskResultsByIdOrThrow(id)
     }

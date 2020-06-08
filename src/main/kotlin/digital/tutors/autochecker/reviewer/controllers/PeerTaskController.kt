@@ -22,7 +22,7 @@ class PeerTaskController: BaseController() {
     @Autowired
     lateinit var peerTaskService: PeerTaskService
 
-    @GetMapping("/tasks")
+    @GetMapping("/tasks/peer")
     fun getPeerTasks(@RequestParam page: Int): ResponseEntity<Page<PeerTaskAdminVO>> = processServiceExceptions {
         try {
             val pageRequest = PageRequest.of(page, 10)
@@ -32,7 +32,7 @@ class PeerTaskController: BaseController() {
         }
     }
 
-    @GetMapping("/author/{id}/tasks")
+    @GetMapping("/author/{id}/tasks/peer")
     fun getPeerTasksByAuthorId(@PathVariable id: String): ResponseEntity<List<PeerTaskVO>> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerTaskService.getPeerTasksByAuthorId(id))
@@ -41,7 +41,7 @@ class PeerTaskController: BaseController() {
         }
     }
 
-    @GetMapping("/topic/{id}/tasks")
+    @GetMapping("/topic/{id}/tasks/peer")
     fun getPeerTasksByTopicId(@PathVariable id: String): ResponseEntity<List<PeerTaskVO>> = processServiceExceptions {
         /*
             TODO: Проверка на получение тасков может быть от студента или препода
@@ -54,7 +54,7 @@ class PeerTaskController: BaseController() {
         }
     }
 
-    @GetMapping("/task/{id}")
+    @GetMapping("/task/peer/{id}")
     fun getPeerTaskById(@PathVariable id: String): ResponseEntity<PeerTaskVO> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerTaskService.getPeerTaskByIdOrThrow(id))
@@ -63,7 +63,7 @@ class PeerTaskController: BaseController() {
         }
     }
 
-    @GetMapping("/task/{id}/admin")
+    @GetMapping("/task/peer/{id}/admin")
     fun getAdminPeerTaskById(@PathVariable id: String): ResponseEntity<PeerTaskAdminVO> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerTaskService.getAdminPeerTaskByIdOrThrow(id))
@@ -82,7 +82,7 @@ class PeerTaskController: BaseController() {
         ResponseEntity.ok(peerTaskService.updatePeerTask(id, peerTaskUpdateRq))
     }
 
-    @DeleteMapping("/task/{id}")
+    @DeleteMapping("/task/peer/{id}")
     fun deletePeerTask(@PathVariable id: String): ResponseEntity<*> = processServiceExceptions {
         ResponseEntity.ok(peerTaskService.delete(id))
     }

@@ -24,7 +24,7 @@ class PeerTaskSolutionController: BaseController() {
     @Autowired
     lateinit var authorizationService: AuthorizationService
 
-    @GetMapping("task/peer/decisions")
+    @GetMapping("/solutions/peer")
     fun getPeerDecisions(@RequestParam page: Int): ResponseEntity<Page<PeerTaskSolutionVO>> = processServiceExceptions {
         try {
             val pageRequest = PageRequest.of(page,10);
@@ -34,7 +34,7 @@ class PeerTaskSolutionController: BaseController() {
         }
     }
 
-    @GetMapping("/author/{id}/peer/decisions")
+    @GetMapping("/author/{id}/solution/peer")
     fun getPeerTaskSolutionsByAuthorId(@PathVariable id: String): ResponseEntity<List<PeerTaskSolutionVO>> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerTaskSolutionService.getPeerTaskSolutionsByUser(id))
@@ -43,7 +43,7 @@ class PeerTaskSolutionController: BaseController() {
         }
     }
 
-    @GetMapping("/task/peer/{peerTask}/decisions")
+    @GetMapping("/task/peer/{peerTask}/solutions")
     fun getPeerTaskSolutionsByUserAndTask(@PathVariable peerTask: String): ResponseEntity<List<PeerTaskSolutionVO>> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerTaskSolutionService.getPeerTaskSolutionsByUserAndTask(authorizationService.currentUserIdOrDie(), peerTask))
@@ -52,7 +52,7 @@ class PeerTaskSolutionController: BaseController() {
         }
     }
 
-    @GetMapping("/peer/decision")
+    @PostMapping("/solution/peer")
     fun savePeerTaskSolution(@RequestBody peerTaskSolutionCreateRq: PeerTaskSolutionCreateRq): ResponseEntity<PeerTaskSolutionVO> = processServiceExceptions {
             ResponseEntity.ok(peerTaskSolutionService.savePeerTaskSolution(peerTaskSolutionCreateRq))
     }
