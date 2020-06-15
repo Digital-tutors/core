@@ -25,7 +25,7 @@ class TaskController : BaseController() {
     @GetMapping("/tasks")
     fun getTasks(@RequestParam page: Int): ResponseEntity<Page<TaskAdminVO>> = processServiceExceptions {
         try {
-            val pageRequest = PageRequest.of(page, 10);
+            val pageRequest = PageRequest.of(page, 10)
             ResponseEntity.ok(taskService.getTasks(pageRequest))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Tasks Not Found", ex)
