@@ -52,15 +52,12 @@ class PeerTaskSolutionServiceImpl: PeerTaskSolutionService {
         return peerTaskSolutionRepository.findAll(pageable).map(::toPeerTaskSolutionVO)
     }
 
-    @Throws(EntityNotFoundException::class)
     override fun savePeerTaskSolution(peerTaskSolutionCreateRq: PeerTaskSolutionCreateRq): PeerTaskSolutionVO {
         val id = peerTaskSolutionRepository.save(PeerTaskSolution().apply {
             taskId = PeerTask(id = peerTaskSolutionCreateRq.taskId?.id)
             userId = User(id = peerTaskSolutionCreateRq.userId?.id)
             language = peerTaskSolutionCreateRq.language
             sourceCode = peerTaskSolutionCreateRq.sourceCode
-            attempt = peerTaskSolutionCreateRq.attempt
-            status = peerTaskSolutionCreateRq.status
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Created entity $id")

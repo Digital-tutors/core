@@ -5,8 +5,8 @@ import digital.tutors.autochecker.core.entity.EntityRefRq
 import java.util.*
 
 data class PeerTaskResultsUpdateRq(
-        var receivedReviews: List<EntityRefRq>?,
-        var postedReviews: List<EntityRefRq>?,
+        var receivedReviews: List<EntityRefRq>? = null,
+        var postedReviews: List<EntityRefRq>? = null,
         var grade: Int?,
         var completed: Boolean,
         var status: PeerTaskResultsStatus

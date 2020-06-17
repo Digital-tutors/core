@@ -5,9 +5,8 @@ import digital.tutors.autochecker.reviewer.entities.PeerTask
 import digital.tutors.autochecker.checker.entities.Topic
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface PeerTaskRepository : MongoRepository<PeerTask, String> {
+    interface PeerTaskRepository : MongoRepository<PeerTask, String> {
 
-    fun findAllByAuthorId(authorId: User): List<PeerTask>
-    fun findAllByTopicId(topicId: Topic): List<PeerTask>
-
-}
+        fun findAllByAuthorId(authorId: User): List<PeerTask>
+        fun findAllByTopicId(topicId: Topic): List<PeerTask>
+    }

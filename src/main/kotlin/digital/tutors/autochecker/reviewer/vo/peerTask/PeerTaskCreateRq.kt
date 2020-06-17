@@ -12,8 +12,8 @@ data class PeerTaskCreateRq(
         var level: Level?,
         var description: String?,
         var title: String?,
-        var options: Options? = null,
-        var criterions: List<String>? = null,
-        var maxGradesPerCriterions: List<Int>? = null,
+        var options: Options?,
+        var criterions: List<String>?,
+        var maxGradesPerCriterions: List<Int>?,
         var isCompleted: Boolean = false
 )

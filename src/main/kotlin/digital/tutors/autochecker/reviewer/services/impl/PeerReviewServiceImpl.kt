@@ -59,7 +59,6 @@ class PeerReviewServiceImpl: PeerReviewService {
         return peerReviewRepository.findAll(pageable).map(::toPeerReviewVO)
     }
 
-    @Throws(EntityNotFoundException::class)
     override fun createPeerReview(peerReviewCreateRq: PeerReviewCreateRq): PeerReviewVO {
         val id = peerReviewRepository.save(PeerReview().apply {
             taskId = PeerTask(id = peerReviewCreateRq.taskId?.id)
@@ -74,7 +73,6 @@ class PeerReviewServiceImpl: PeerReviewService {
         return getPeerReviewByIdOrThrow(id)
     }
 
-    @Throws(EntityNotFoundException::class)
     override fun updatePeerReview(id: String, peerReviewUpdateRq: PeerReviewUpdateRq): PeerReviewVO {
         peerReviewRepository.save(peerReviewRepository.findById(id).get().apply {
             gradesPerCriterions = peerReviewUpdateRq.gradesPerCriterions

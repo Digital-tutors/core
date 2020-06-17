@@ -54,7 +54,6 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
         return peerTaskResultsRepository.findAll(pageable).map(::toPeerTaskResultsVO)
     }
 
-    @Throws(EntityNotFoundException::class)
     override fun createPeerTaskResults(peerTaskResultsCreateRq: PeerTaskResultsCreateRq): PeerTaskResultsVO {
         val id = peerTaskResultsRepository.save(PeerTaskResults().apply {
             taskId = PeerTask(id = peerTaskResultsCreateRq.taskId?.id)
@@ -70,7 +69,6 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
         return getPeerTaskResultsByIdOrThrow(id)
     }
 
-    @Throws(EntityNotFoundException::class)
     override fun updatePeerTaskResults(id: String, peerTaskResultsUpdateRq: PeerTaskResultsUpdateRq): PeerTaskResultsVO {
         peerTaskResultsRepository.save(peerTaskResultsRepository.findById(id).get().apply {
             receivedReviews = peerTaskResultsUpdateRq.receivedReviews?.map { PeerReview(id = it.id) }

@@ -5,10 +5,10 @@ import digital.tutors.autochecker.core.entity.EntityRefRq
 import java.util.*
 
 data class PeerTaskResultsCreateRq(
-        var taskId: EntityRefRq?,
-        var studentId: EntityRefRq?,
-        var receivedReviews: List<EntityRefRq>?,
-        var postedReviews: List<EntityRefRq>?,
+        var taskId: EntityRefRq? = null,
+        var studentId: EntityRefRq? = null,
+        var receivedReviews: List<EntityRefRq>? = null,
+        var postedReviews: List<EntityRefRq>? = null,
         var grade: Int?,
         var completed: Boolean,
         var status: PeerTaskResultsStatus

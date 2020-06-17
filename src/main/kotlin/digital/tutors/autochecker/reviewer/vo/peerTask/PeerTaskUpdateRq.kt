@@ -11,7 +11,7 @@ data class PeerTaskUpdateRq(
         var description: String?,
         var options: Options?,
         var title: String?,
-        var criterions: List<String>? = null,
-        var maxGradesPerCriterions: List<Int>? = null,
+        var criterions: List<String>?,
+        var maxGradesPerCriterions: List<Int>?,
         var isCompleted: Boolean = false
 )

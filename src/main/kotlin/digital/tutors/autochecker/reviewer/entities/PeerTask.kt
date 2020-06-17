@@ -28,4 +28,3 @@ data class PeerTask(
         var maxGradesPerCriterions: List<Int>? = null,
         var isCompleted: Boolean = false
 ) : AuditableEntity()
-
