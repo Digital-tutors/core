@@ -1,5 +1,6 @@
 package digital.tutors.autochecker.checker.services
 
+import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import digital.tutors.autochecker.checker.vo.topic.TopicCreateRq
 import digital.tutors.autochecker.checker.vo.topic.TopicUpdateRq

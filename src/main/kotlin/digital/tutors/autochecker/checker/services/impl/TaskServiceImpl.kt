@@ -1,6 +1,7 @@
 package digital.tutors.autochecker.checker.services.impl
 
 import digital.tutors.autochecker.auth.entities.User
+import digital.tutors.autochecker.auth.repositories.UserRepository
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
 import digital.tutors.autochecker.checker.repositories.TaskRepository
 import digital.tutors.autochecker.checker.services.TaskService
@@ -10,6 +11,7 @@ import digital.tutors.autochecker.checker.vo.task.TaskVO
 import digital.tutors.autochecker.checker.entities.Task
 import digital.tutors.autochecker.checker.entities.Topic
 import digital.tutors.autochecker.checker.repositories.TaskResultsRepository
+import digital.tutors.autochecker.checker.repositories.TopicRepository
 import digital.tutors.autochecker.checker.vo.task.TaskAdminVO
 import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
@@ -27,6 +29,12 @@ class TaskServiceImpl : TaskService {
 
     @Autowired
     lateinit var taskRepository: TaskRepository
+
+    @Autowired
+    lateinit var topicRepository: TopicRepository
+
+    @Autowired
+    lateinit var userRepository: UserRepository
 
     @Autowired
     lateinit var taskResultsRepository: TaskResultsRepository
@@ -55,10 +63,17 @@ class TaskServiceImpl : TaskService {
         return taskRepository.findAll(pageable).map(::toTaskAdminVO)
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun createTask(taskCreateRq: TaskCreateRq): TaskVO {
+        val user = userRepository.findByIdOrNull(authorizationService.currentUserIdOrDie())
+                ?: throw EntityNotFoundException("User with ${authorizationService.currentUserIdOrDie()} not found.")
+
+        val topic = topicRepository.findByIdOrNull(taskCreateRq.topicId?.id)
+                ?: throw EntityNotFoundException("Topic with ${taskCreateRq.topicId?.id} not found.")
+
         val id = taskRepository.save(Task().apply {
-            topicId = Topic(id = taskCreateRq.topicId?.id)
-            authorId = User(id = taskCreateRq.authorId?.id)
+            topicId = topic
+            authorId = user
             contributors = taskCreateRq.contributors?.map { User(id = it.id) }
             level = taskCreateRq.level
             description = taskCreateRq.description

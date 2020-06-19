@@ -76,11 +76,14 @@ class TopicServiceImpl : TopicService {
     }
 
     override fun createTopic(topicCreateRq: TopicCreateRq): TopicVO {
+        val user = userRepository.findByIdOrNull(authorizationService.currentUserIdOrDie())
+                ?: throw EntityNotFoundException("User with ${authorizationService.currentUserIdOrDie()} not found.")
+
         val id = topicRepository.save(Topic().apply {
             title = topicCreateRq.title
             accessType = topicCreateRq.accessType
             followers = topicCreateRq.followers?.map { User(id = it.id) }
-            authorId = User(id = topicCreateRq.authorId?.id)
+            authorId = user
             contributors = topicCreateRq.contributors?.map { User(id = it.id) }
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
