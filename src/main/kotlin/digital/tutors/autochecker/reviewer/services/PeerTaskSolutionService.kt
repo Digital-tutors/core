@@ -5,6 +5,7 @@ import digital.tutors.autochecker.reviewer.vo.peerTaskSolution.PeerTaskSolutionV
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsCreateRq
 import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsVO
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsVO
 import org.springframework.amqp.AmqpException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -25,6 +26,10 @@ interface PeerTaskSolutionService {
 
     @Throws(EntityNotFoundException::class)
     fun getPeerTaskSolutions(pageable: Pageable): Page<PeerTaskSolutionVO>
+
+
+    @Throws(EntityNotFoundException::class, AmqpException::class)
+    fun getPeerTaskSolutionOfRandomUserByPeerTask(id: String): PeerTaskSolutionVO
 
     @Throws(EntityNotFoundException::class, AmqpException::class)
     fun savePeerTaskSolution(peerTaskSolutionCreateRq: PeerTaskSolutionCreateRq): PeerTaskSolutionVO

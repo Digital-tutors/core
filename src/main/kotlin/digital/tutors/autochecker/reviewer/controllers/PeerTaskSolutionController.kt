@@ -6,6 +6,7 @@ import digital.tutors.autochecker.reviewer.vo.peerTaskSolution.PeerTaskSolutionV
 import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.controller.BaseController
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import digital.tutors.autochecker.reviewer.entities.PeerTaskSolution
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -25,12 +26,21 @@ class PeerTaskSolutionController: BaseController() {
     lateinit var authorizationService: AuthorizationService
 
     @GetMapping("/solutions/peer")
-    fun getPeerDecisions(@RequestParam page: Int): ResponseEntity<Page<PeerTaskSolutionVO>> = processServiceExceptions {
+    fun getPeerSolutions(@RequestParam page: Int): ResponseEntity<Page<PeerTaskSolutionVO>> = processServiceExceptions {
         try {
             val pageRequest = PageRequest.of(page,10);
             ResponseEntity.ok(peerTaskSolutionService.getPeerTaskSolutions(pageRequest))
         }  catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decisions Not Found", ex)
+        }
+    }
+
+    @GetMapping("/task/peer/{peerTask}/solution/peer")
+    fun getRandomPeerTaskSolutionByTask(@PathVariable peerTask: String): ResponseEntity<PeerTaskSolutionVO> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(peerTaskSolutionService.getPeerTaskSolutionOfRandomUserByPeerTask(peerTask))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Decision Not Found", ex)
         }
     }
 

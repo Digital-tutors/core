@@ -12,6 +12,8 @@ import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsUpd
 import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsVO
 import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import digital.tutors.autochecker.reviewer.entities.PeerTaskResultsStatus
+import digital.tutors.autochecker.reviewer.repositories.PeerTaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -25,6 +27,9 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
 
     @Autowired
     lateinit var peerTaskResultsRepository: PeerTaskResultsRepository
+
+    @Autowired
+    lateinit var peerTaskRepository: PeerTaskRepository
 
     @Autowired
     lateinit var authorizationService: AuthorizationService
@@ -76,6 +81,7 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
             grade = peerTaskResultsUpdateRq.grade
             completed = peerTaskResultsUpdateRq.completed
             status = peerTaskResultsUpdateRq.status
+            countOfPostedReviews = if(peerTaskResultsUpdateRq.postedReviews.isNullOrEmpty()) countOfPostedReviews else countOfPostedReviews++
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Created entity $id")

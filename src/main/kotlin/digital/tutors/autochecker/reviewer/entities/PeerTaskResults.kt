@@ -22,6 +22,7 @@ data class PeerTaskResults(
         @DBRef
         var postedReviews: List<PeerReview>? = null,
 
+        var countOfPostedReviews: Long = 0,
         var grade: Int? = null,
         var completed: Boolean = false,
         var status: PeerTaskResultsStatus = PeerTaskResultsStatus.NOT_CHECKING

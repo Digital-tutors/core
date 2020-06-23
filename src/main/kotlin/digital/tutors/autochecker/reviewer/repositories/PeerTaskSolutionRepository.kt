@@ -14,7 +14,6 @@ interface PeerTaskSolutionRepository: MongoRepository<PeerTaskSolution, String> 
     fun findFirstByUserIdAndTaskId(userId: User, taskId: PeerTask): PeerTaskSolution?
     fun findAllByUserIdAndTaskId(userId: User, taskId: PeerTask): List<PeerTaskSolution>
     fun findAllByUserIdAndTaskIdOrderByCreatedDtDesc(userId: User, taskId: PeerTask): List<PeerTaskSolution>
-    fun findFirstByUserIdAndTaskIdAndLanguageOrderByAttemptDesc(userId: User, taskId: PeerTask, language: String): PeerTaskSolution?
     fun findByUserId(userId: User): PeerTaskSolution
 
 }

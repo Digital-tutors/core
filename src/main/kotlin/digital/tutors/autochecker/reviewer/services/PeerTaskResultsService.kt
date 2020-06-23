@@ -4,6 +4,7 @@ import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsCre
 import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsUpdateRq
 import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsVO
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import digital.tutors.autochecker.reviewer.entities.PeerTaskResults
 import org.springframework.amqp.AmqpException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

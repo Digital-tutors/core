@@ -18,6 +18,5 @@ data class PeerTaskSolution(
 
         var language: String? = null,
         var sourceCode: String? = null,
-        var attempt: Int = 0,
         var status: PeerTaskResultsStatus = PeerTaskResultsStatus.NOT_CHECKING
 ) : AuditableEntity()

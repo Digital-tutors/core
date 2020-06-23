@@ -10,6 +10,11 @@ import digital.tutors.autochecker.reviewer.vo.peerTaskSolution.PeerTaskSolutionC
 import digital.tutors.autochecker.reviewer.vo.peerTaskSolution.PeerTaskSolutionVO
 import digital.tutors.autochecker.core.auth.AuthorizationService
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
+import digital.tutors.autochecker.reviewer.entities.PeerTaskResults
+import digital.tutors.autochecker.reviewer.entities.PeerTaskResultsStatus
+import digital.tutors.autochecker.reviewer.repositories.PeerTaskRepository
+import digital.tutors.autochecker.reviewer.repositories.PeerTaskResultsRepository
+import digital.tutors.autochecker.reviewer.vo.peerTaskResults.PeerTaskResultsVO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -23,6 +28,12 @@ class PeerTaskSolutionServiceImpl: PeerTaskSolutionService {
 
     @Autowired
     lateinit var peerTaskSolutionRepository: PeerTaskSolutionRepository
+
+    @Autowired
+    lateinit var peerTaskResultsRepository: PeerTaskResultsRepository
+
+    @Autowired
+    lateinit var peerTaskRepository: PeerTaskRepository
 
     @Autowired
     lateinit var authorizationService: AuthorizationService
@@ -52,12 +63,32 @@ class PeerTaskSolutionServiceImpl: PeerTaskSolutionService {
         return peerTaskSolutionRepository.findAll(pageable).map(::toPeerTaskSolutionVO)
     }
 
+    @Throws(EntityNotFoundException::class)
+    private fun getPeerTaskSolutionByUserAndTask(user: User, peerTask: PeerTask): PeerTaskSolutionVO {
+        val userSolution = peerTaskSolutionRepository.findFirstByUserIdAndTaskId(user, peerTask) ?: throw EntityNotFoundException("Solution not found")
+        return toPeerTaskSolutionVO(userSolution)
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getPeerTaskSolutionOfRandomUserByPeerTask(id: String): PeerTaskSolutionVO {
+        val peerTask = peerTaskRepository.findById(id).orElseThrow { throw EntityNotFoundException("Task with $id not found")}
+        val randomUserResult = peerTaskResultsRepository.findFirstByCompletedFalseAndStatusAndTaskIdOrderByCountOfPostedReviewsDesc(PeerTaskResultsStatus.NOT_CHECKING, peerTask) ?: throw EntityNotFoundException("Results not found")
+        return getPeerTaskSolutionByUserAndTask(randomUserResult.studentId!!, peerTask)
+    }
+
     override fun savePeerTaskSolution(peerTaskSolutionCreateRq: PeerTaskSolutionCreateRq): PeerTaskSolutionVO {
         val id = peerTaskSolutionRepository.save(PeerTaskSolution().apply {
             taskId = PeerTask(id = peerTaskSolutionCreateRq.taskId?.id)
             userId = User(id = peerTaskSolutionCreateRq.userId?.id)
             language = peerTaskSolutionCreateRq.language
             sourceCode = peerTaskSolutionCreateRq.sourceCode
+        }).id ?: throw IllegalArgumentException("Bad id returned.")
+
+        val resultsId = peerTaskResultsRepository.save(PeerTaskResults().apply {
+            taskId = PeerTask(id = peerTaskSolutionCreateRq.taskId?.id)
+            studentId = User(id = peerTaskSolutionCreateRq.userId?.id)
+            completed = false
+            status = PeerTaskResultsStatus.NOT_CHECKING
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         log.debug("Created entity $id")

@@ -12,7 +12,6 @@ data class PeerTaskSolutionVO(
         var userId: UserVO?,
         var language: String?,
         var sourceCode: String?,
-        var attempt: Int,
         var status: PeerTaskResultsStatus
 ){
     companion object {
@@ -23,7 +22,6 @@ data class PeerTaskSolutionVO(
                         taskSolution.userId?.let { UserVO.fromData(it, null) },
                         taskSolution.language,
                         taskSolution.sourceCode,
-                        taskSolution.attempt,
                         taskSolution.status
                 )
     }

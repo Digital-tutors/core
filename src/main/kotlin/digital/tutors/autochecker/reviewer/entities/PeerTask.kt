@@ -26,5 +26,6 @@ data class PeerTask(
         var options: Options? = null,
         var criterions: List<String>? = null,
         var maxGradesPerCriterions: List<Int>? = null,
+        var teacherComment: String? = null,
         var isCompleted: Boolean = false
 ) : AuditableEntity()
