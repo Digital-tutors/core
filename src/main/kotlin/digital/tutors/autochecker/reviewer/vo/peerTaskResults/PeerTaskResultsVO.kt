@@ -11,12 +11,11 @@ data class PeerTaskResultsVO(
         var id: String?,
         var taskId: PeerTaskVO?,
         var studentId: UserVO?,
-        var receivedReviews: List<PeerReviewVO>?,
-        var postedReviews: List<PeerReviewVO>?,
-        var grade: Int?,
+        var receivedReviews: Int,
+        var postedReviews: Int,
+        var grade: Int,
         var completed: Boolean,
-        var status: PeerTaskResultsStatus,
-        var countOfPostedReviews: Long?
+        var status: PeerTaskResultsStatus
 ){
     companion object {
         fun fromData(taskResults: PeerTaskResults, userId: String?, isCompleted: Boolean): PeerTaskResultsVO =
@@ -24,12 +23,11 @@ data class PeerTaskResultsVO(
                         taskResults.id,
                         taskResults.taskId?.let { PeerTaskVO.fromData(it, userId, isCompleted) },
                         taskResults.studentId?.let { UserVO.fromData(it, null) },
-                        taskResults.receivedReviews?.map { PeerReviewVO.fromData(it, userId)},
-                        taskResults.receivedReviews?.map { PeerReviewVO.fromData (it, userId)},
+                        taskResults.receivedReviews,
+                        taskResults.postedReviews,
                         taskResults.grade,
                         taskResults.completed,
-                        taskResults.status,
-                        taskResults.countOfPostedReviews
+                        taskResults.status
                 )
     }
 }

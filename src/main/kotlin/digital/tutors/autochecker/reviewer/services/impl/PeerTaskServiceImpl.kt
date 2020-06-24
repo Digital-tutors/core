@@ -1,9 +1,11 @@
 package digital.tutors.autochecker.reviewer.services.impl
 
 import digital.tutors.autochecker.auth.entities.User
+import digital.tutors.autochecker.auth.repositories.UserRepository
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
 import digital.tutors.autochecker.reviewer.entities.PeerTask
 import digital.tutors.autochecker.checker.entities.Topic
+import digital.tutors.autochecker.checker.repositories.TopicRepository
 import digital.tutors.autochecker.reviewer.repositories.PeerTaskRepository
 import digital.tutors.autochecker.reviewer.repositories.PeerTaskResultsRepository
 import digital.tutors.autochecker.reviewer.services.PeerTaskService
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -33,14 +36,24 @@ class PeerTaskServiceImpl: PeerTaskService {
     @Autowired
     lateinit var peerTaskResultsRepository: PeerTaskResultsRepository
 
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var topicRepository: TopicRepository
+
     @Throws(EntityNotFoundException::class)
     override fun getPeerTasksByAuthorId(authorId: String): List<PeerTaskVO> {
-        return peerTaskRepository.findAllByAuthorId(User(id = authorId)).map(::toPeerTaskVO)
+        val author = userRepository.findByIdOrNull(authorId)
+                ?: throw EntityNotFoundException("User with $authorId not found.")
+        return peerTaskRepository.findAllByAuthorId(author).map(::toPeerTaskVO)
     }
 
     @Throws(EntityNotFoundException::class)
     override fun getPeerTasksByTopicId(topicId: String): List<PeerTaskVO> {
-        return peerTaskRepository.findAllByTopicId(Topic(id = topicId)).map(::toPeerTaskVO)
+        val topic = topicRepository.findByIdOrNull(topicId) ?: throw EntityNotFoundException("Topic with $topicId not found.")
+
+        return peerTaskRepository.findAllByTopicId(topic).map(::toPeerTaskVO)
     }
 
     @Throws(EntityNotFoundException::class)

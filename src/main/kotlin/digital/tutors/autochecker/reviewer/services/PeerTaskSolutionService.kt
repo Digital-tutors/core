@@ -27,7 +27,6 @@ interface PeerTaskSolutionService {
     @Throws(EntityNotFoundException::class)
     fun getPeerTaskSolutions(pageable: Pageable): Page<PeerTaskSolutionVO>
 
-
     @Throws(EntityNotFoundException::class, AmqpException::class)
     fun getPeerTaskSolutionOfRandomUserByPeerTask(id: String): PeerTaskSolutionVO
 

@@ -16,14 +16,9 @@ data class PeerTaskResults(
         @DBRef
         var studentId: User? = null,
 
-        @DBRef
-        var receivedReviews: List<PeerReview>? = null,
-
-        @DBRef
-        var postedReviews: List<PeerReview>? = null,
-
-        var countOfPostedReviews: Long = 0,
-        var grade: Int? = null,
+        var receivedReviews: Int = 0,
+        var postedReviews: Int = 0,
+        var grade: Int = 0,
         var completed: Boolean = false,
         var status: PeerTaskResultsStatus = PeerTaskResultsStatus.NOT_CHECKING
 ) : AuditableEntity()

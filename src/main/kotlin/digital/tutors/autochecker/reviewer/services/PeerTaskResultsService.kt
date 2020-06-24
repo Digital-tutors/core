@@ -21,15 +21,18 @@ interface PeerTaskResultsService {
     fun getPeerTaskResultsByTaskId(taskId: String): List<PeerTaskResultsVO>
 
     @Throws(EntityNotFoundException::class)
-    fun getPeerTaskResultsByIdOrThrow(id: String): PeerTaskResultsVO
+    fun getPeerTaskResultByIdOrThrow(id: String): PeerTaskResultsVO
+
+    @Throws(EntityNotFoundException::class)
+    fun getPeerTaskResultByPeerTaskIdAndUser(peerTaskId: String, userId: String): PeerTaskResultsVO
 
     @Throws(EntityNotFoundException::class)
     fun getPeerTaskResults(pageable: Pageable): Page<PeerTaskResultsVO>
 
     @Throws(EntityNotFoundException::class, AmqpException::class)
-    fun createPeerTaskResults(peerTaskResultsCreateRq: PeerTaskResultsCreateRq): PeerTaskResultsVO
+    fun createPeerTaskResult(peerTaskResultsCreateRq: PeerTaskResultsCreateRq): PeerTaskResultsVO
 
     @Throws(EntityNotFoundException::class, AmqpException::class)
-    fun updatePeerTaskResults(id: String, peerTaskResultsUpdateRq: PeerTaskResultsUpdateRq): PeerTaskResultsVO
+    fun updatePeerTaskResult(id: String, peerTaskResultsUpdateRq: PeerTaskResultsUpdateRq): PeerTaskResultsVO
 
 }

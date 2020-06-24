@@ -53,6 +53,15 @@ class PeerResultsController: BaseController() {
         }
     }
 
+    @GetMapping("/task/{task}/decision/peer/{user}")
+    fun getPeerTaskResultByUserAndTask(@PathVariable task: String, @PathVariable user: String): ResponseEntity<PeerTaskResultsVO> = processServiceExceptions {
+        try {
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultByPeerTaskIdAndUser(task, authorizationService.currentUserIdOrDie()))
+        } catch (ex: EntityNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results for user with topic Not Found", ex)
+        }
+    }
+
     @GetMapping("/user/decisions/peer")
     fun getPeerDecisionsByUser(): ResponseEntity<List<PeerTaskResultsVO>> = processServiceExceptions {
         try {
@@ -65,7 +74,7 @@ class PeerResultsController: BaseController() {
     @GetMapping("/decision/peer/{id}")
     fun getPeerDecisionById(@PathVariable id: String): ResponseEntity<PeerTaskResultsVO> = processServiceExceptions {
         try {
-            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByIdOrThrow(id))
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultByIdOrThrow(id))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results Not Found", ex)
         }
@@ -73,7 +82,7 @@ class PeerResultsController: BaseController() {
 
     @PostMapping("/decision/peer")
     fun savePeerDecision(@RequestBody taskResultsCreateRq: PeerTaskResultsCreateRq): ResponseEntity<PeerTaskResultsVO> = processServiceExceptions {
-        ResponseEntity.ok(peerTaskResultsService.createPeerTaskResults(taskResultsCreateRq))
+        ResponseEntity.ok(peerTaskResultsService.createPeerTaskResult(taskResultsCreateRq))
     }
 
 }

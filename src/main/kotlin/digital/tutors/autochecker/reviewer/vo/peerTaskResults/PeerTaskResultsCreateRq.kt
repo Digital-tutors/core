@@ -6,10 +6,5 @@ import java.util.*
 
 data class PeerTaskResultsCreateRq(
         var taskId: EntityRefRq? = null,
-        var studentId: EntityRefRq? = null,
-        var receivedReviews: List<EntityRefRq>? = null,
-        var postedReviews: List<EntityRefRq>? = null,
-        var grade: Int?,
-        var completed: Boolean,
-        var status: PeerTaskResultsStatus
+        var studentId: EntityRefRq? = null
 )
