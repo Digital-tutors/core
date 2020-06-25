@@ -10,5 +10,6 @@ data class PeerReviewCreateRq(
         var solutionId: EntityRefRq? = null,
         var gradesPerCriterions: List<Int>?,
         var argumentsPerCriterions: List<String>?,
-        var summaryMessagePerSolution: String?
+        var summaryMessagePerSolution: String?,
+        var grade: Double?
 )

@@ -23,6 +23,7 @@ data class PeerReview(
         @DBRef
         var solutionId: PeerTaskSolution? = null,
 
+        var grade: Double = 0.0,
         var gradesPerCriterions: List<Int>? = null,
         var argumentsPerCriterions: List<String>? = null,
         var summaryMessagePerSolution: String? = null

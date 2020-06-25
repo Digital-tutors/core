@@ -93,7 +93,7 @@ class PeerTaskSolutionServiceImpl: PeerTaskSolutionService {
         val peerTask = peerTaskRepository.findById(id).orElseThrow { throw EntityNotFoundException("Task with $id not found")}
         val randomUserResult = peerTaskResultsRepository.findFirstByCompletedFalseAndStatusAndTaskIdOrderByPostedReviewsDesc(PeerTaskResultsStatus.NOT_CHECKING, peerTask) ?: throw EntityNotFoundException("Results not found")
         val solution = getPeerTaskSolutionByUserAndTask(randomUserResult.studentId!!, peerTask)
-        val res = peerTaskResultsRepositoryImpl.setStatusForPeerTaskResults(PeerTaskResultsStatus.IN_PROCESS, randomUserResult.id!!)
+        peerTaskResultsRepositoryImpl.setStatusForPeerTaskResults(PeerTaskResultsStatus.IN_PROCESS, randomUserResult.id!!)
         return solution
     }
 

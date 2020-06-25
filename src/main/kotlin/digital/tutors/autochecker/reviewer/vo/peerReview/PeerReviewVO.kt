@@ -14,7 +14,8 @@ data class PeerReviewVO (
         var solutionId: PeerTaskSolutionVO?,
         var gradesPerCriterions: List<Int>?,
         var argumentsPerCriterions: List<String>?,
-        var summaryMessagePerSolution: String?
+        var summaryMessagePerSolution: String?,
+        var grade: Double
 ) {
     companion object {
         fun fromData(peerReview: PeerReview, userId: String?): PeerReviewVO =
@@ -26,7 +27,8 @@ data class PeerReviewVO (
                         peerReview.solutionId?.let { PeerTaskSolutionVO.fromData(it, null) },
                         peerReview.gradesPerCriterions,
                         peerReview.argumentsPerCriterions,
-                        peerReview.summaryMessagePerSolution
+                        peerReview.summaryMessagePerSolution,
+                        peerReview.grade
                 )
     }
 }

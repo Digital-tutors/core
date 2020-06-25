@@ -15,5 +15,5 @@ interface PeerReviewRepository : MongoRepository<PeerReview, String> {
     fun findFirstById(id: String): PeerReview
     fun findFirstByStudentId(studentId: User): PeerReview
     fun findFirstByExpertId(expertId: User): PeerReview
-    fun findAllByStudentIdOrderByCreatedDtDesc(studentId: User): List<PeerReview>
+    fun findAllByStudentIdAndTaskIdOrderByCreatedDtAsc(studentId: User, peerTaskId: PeerTask): List<PeerReview>
 }

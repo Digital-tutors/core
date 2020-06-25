@@ -5,5 +5,6 @@ import java.util.*
 data class PeerReviewUpdateRq(
         var gradesPerCriterions: List<Int>?,
         var argumentsPerCriterions: List<String>?,
-        var summaryMessagePerSolution: String?
+        var summaryMessagePerSolution: String?,
+        var grade: Double?
 )
