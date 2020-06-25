@@ -19,5 +19,5 @@ interface PeerTaskResultsRepository : MongoRepository<PeerTaskResults, String> {
     fun findAllByStudentIdAndTaskId(userId: User, taskId: PeerTask): List<PeerTaskResults>
     fun findAllByStudentIdAndTaskIdOrderByCreatedDtDesc(userId: User, taskId: PeerTask): List<PeerTaskResults>
     fun findFirstById(id: String): PeerTaskResults
-    fun findFirstByCompletedFalseAndStatusAndTaskIdOrderByPostedReviewsDesc(status: PeerTaskResultsStatus, peerTaskId: PeerTask): PeerTaskResults?
+    fun findFirstByCompletedFalseAndStatusAndTaskIdAndStudentIdIsNotOrderByPostedReviewsDesc(status: PeerTaskResultsStatus, peerTaskId: PeerTask, studentId: User): PeerTaskResults?
 }

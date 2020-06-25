@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class PeerReviewServiceImpl: PeerReviewService {
+class PeerReviewServiceImpl : PeerReviewService {
 
     private val log = LoggerFactory.getLogger(UserServiceImpl::class.java)
 
@@ -69,20 +69,22 @@ class PeerReviewServiceImpl: PeerReviewService {
 
     @Throws(EntityNotFoundException::class)
     override fun getPeerReviewsByPeerTaskId(taskId: String): List<PeerReviewVO> {
-        val task = peerTaskRepository.findByIdOrNull(taskId) ?: throw EntityNotFoundException("Task with $taskId not found.")
+        val task = peerTaskRepository.findByIdOrNull(taskId)
+                ?: throw EntityNotFoundException("Task with $taskId not found.")
 
         return peerReviewRepository.findAllByTaskId(task).map(::toPeerReviewVO)
     }
 
     @Throws(EntityNotFoundException::class)
     override fun getPeerReviewsBySolutionId(solutionId: String): List<PeerReviewVO> {
-        val solution = peerTaskSolutionRepository.findByIdOrNull(solutionId) ?: throw EntityNotFoundException("Solution with $solutionId not found.")
+        val solution = peerTaskSolutionRepository.findByIdOrNull(solutionId)
+                ?: throw EntityNotFoundException("Solution with $solutionId not found.")
         return peerReviewRepository.findAllBySolutionId(solution).map(::toPeerReviewVO)
     }
 
     @Throws(EntityNotFoundException::class)
     override fun getPeerReviewByIdOrThrow(id: String): PeerReviewVO {
-        return peerReviewRepository.findById(id).map(::toPeerReviewVO).orElseThrow{ throw EntityNotFoundException("Peer review with $id not found") }
+        return peerReviewRepository.findById(id).map(::toPeerReviewVO).orElseThrow { throw EntityNotFoundException("Peer review with $id not found") }
     }
 
     @Throws(EntityNotFoundException::class)
@@ -91,26 +93,36 @@ class PeerReviewServiceImpl: PeerReviewService {
     }
 
     @Transactional
+    @Throws(EntityNotFoundException::class)
     override fun createPeerReview(peerReviewCreateRq: PeerReviewCreateRq): PeerReviewVO {
+
+        // TODO: возращение статуса в NOT_CHECKING в случае ошибки
+        val peerTask = peerTaskRepository.findById(peerReviewCreateRq.taskId?.id!!).orElseThrow { throw EntityNotFoundException("Task not found") }
+        val student = userRepository.findByIdOrNull(peerReviewCreateRq.studentId?.id!!)
+                ?: throw EntityNotFoundException("User not found.")
+        val expert = userRepository.findByIdOrNull(peerReviewCreateRq.expertId?.id!!)
+                ?: throw EntityNotFoundException("User not found.")
+        val peerTaskSolution = peerTaskSolutionRepository.findById(peerReviewCreateRq.solutionId?.id!!).orElseThrow { throw EntityNotFoundException("Solution not found") }
+
         val id = peerReviewRepository.save(PeerReview().apply {
-            taskId = PeerTask(peerReviewCreateRq.taskId?.id)
-            studentId = User(peerReviewCreateRq.studentId?.id)
-            expertId = User(peerReviewCreateRq.expertId?.id)
-            solutionId = PeerTaskSolution(peerReviewCreateRq.solutionId?.id)
+            taskId = peerTask
+            studentId = student
+            expertId = expert
+            solutionId = peerTaskSolution
             argumentsPerCriterions = peerReviewCreateRq.argumentsPerCriterions
             gradesPerCriterions = peerReviewCreateRq.gradesPerCriterions
             summaryMessagePerSolution = peerReviewCreateRq.summaryMessagePerSolution
             grade = peerReviewCreateRq.grade!!
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
-        val studentResult = peerTaskResultsRepository.findFirstByStudentIdAndTaskId(User(peerReviewCreateRq.studentId?.id), PeerTask(peerReviewCreateRq.taskId?.id))
-        val expertResult = peerTaskResultsRepository.findFirstByStudentIdAndTaskId(User(peerReviewCreateRq.expertId?.id), PeerTask(peerReviewCreateRq.taskId?.id))
+        val studentResult = peerTaskResultsRepository.findFirstByStudentIdAndTaskId(student, peerTask)
+        val expertResult = peerTaskResultsRepository.findFirstByStudentIdAndTaskId(expert, peerTask)
         var gradesArray: MutableList<Double> = arrayListOf()
 
-        if(expertResult!!.postedReviews + 1 == 3 && expertResult!!.receivedReviews >= 3) {
-            val reviewsArray = peerReviewRepository.findAllByStudentIdAndTaskIdOrderByCreatedDtAsc(User(peerReviewCreateRq.studentId?.id), PeerTask(peerReviewCreateRq.taskId?.id)).subList(0, 3)
+        if (expertResult!!.postedReviews + 1 == 3 && expertResult!!.receivedReviews >= 3) {
+            val reviewsArray = peerReviewRepository.findAllByStudentIdAndTaskIdOrderByCreatedDtAsc(student, peerTask).subList(0, 3)
 
-            for((index, review) in reviewsArray.withIndex()) {
+            for ((index, review) in reviewsArray.withIndex()) {
                 gradesArray[index] = review.grade
             }
         }
@@ -118,8 +130,8 @@ class PeerReviewServiceImpl: PeerReviewService {
             updateValueOfReceivedReviewsAndStatus(studentResult?.receivedReviews!! + 1, PeerTaskResultsStatus.NOT_CHECKING, studentResult.id!!)
             updateValueOfPostedReviews(expertResult!!.postedReviews + 1, expertResult.id!!, gradesArray)
         }
-            log.debug("Created entity $id")
-            return getPeerReviewByIdOrThrow(id)
+        log.debug("Created entity $id")
+        return getPeerReviewByIdOrThrow(id)
     }
 
     override fun updatePeerReview(id: String, peerReviewUpdateRq: PeerReviewUpdateRq): PeerReviewVO {

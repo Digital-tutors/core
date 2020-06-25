@@ -90,8 +90,9 @@ class PeerTaskSolutionServiceImpl: PeerTaskSolutionService {
 
     @Throws(EntityNotFoundException::class)
     override fun getPeerTaskSolutionOfRandomUserByPeerTask(id: String): PeerTaskSolutionVO {
+        val currentUser = userRepository.findByIdOrNull(authorizationService.currentUserIdOrDie()) ?: throw EntityNotFoundException("User not found")
         val peerTask = peerTaskRepository.findById(id).orElseThrow { throw EntityNotFoundException("Task with $id not found")}
-        val randomUserResult = peerTaskResultsRepository.findFirstByCompletedFalseAndStatusAndTaskIdOrderByPostedReviewsDesc(PeerTaskResultsStatus.NOT_CHECKING, peerTask) ?: throw EntityNotFoundException("Results not found")
+        val randomUserResult = peerTaskResultsRepository.findFirstByCompletedFalseAndStatusAndTaskIdAndStudentIdIsNotOrderByPostedReviewsDesc(PeerTaskResultsStatus.NOT_CHECKING, peerTask, currentUser) ?: throw EntityNotFoundException("Results not found")
         val solution = getPeerTaskSolutionByUserAndTask(randomUserResult.studentId!!, peerTask)
         peerTaskResultsRepositoryImpl.setStatusForPeerTaskResults(PeerTaskResultsStatus.IN_PROCESS, randomUserResult.id!!)
         return solution
@@ -99,16 +100,17 @@ class PeerTaskSolutionServiceImpl: PeerTaskSolutionService {
 
     @Transactional
     override fun savePeerTaskSolution(peerTaskSolutionCreateRq: PeerTaskSolutionCreateRq): PeerTaskSolutionVO {
-        val id = peerTaskSolutionRepository.save(PeerTaskSolution().apply {
-            taskId = PeerTask(id = peerTaskSolutionCreateRq.taskId?.id)
-            userId = User(id = peerTaskSolutionCreateRq.userId?.id)
-            language = peerTaskSolutionCreateRq.language
-            sourceCode = peerTaskSolutionCreateRq.sourceCode
-        }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         val peerTask = peerTaskRepository.findById(peerTaskSolutionCreateRq.taskId?.id!!).orElseThrow { throw EntityNotFoundException("Task not found")}
         val user = userRepository.findByIdOrNull(peerTaskSolutionCreateRq.userId?.id!!)
                 ?: throw EntityNotFoundException("User not found.")
+
+        val id = peerTaskSolutionRepository.save(PeerTaskSolution().apply {
+            taskId = peerTask
+            userId = user
+            language = peerTaskSolutionCreateRq.language
+            sourceCode = peerTaskSolutionCreateRq.sourceCode
+        }).id ?: throw IllegalArgumentException("Bad id returned.")
 
         val resultsId = peerTaskResultsRepository.save(PeerTaskResults().apply {
             taskId = peerTask

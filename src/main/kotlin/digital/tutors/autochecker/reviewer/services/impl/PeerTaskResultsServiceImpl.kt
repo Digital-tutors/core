@@ -99,7 +99,6 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
 
     override fun updatePeerTaskResult(id: String, peerTaskResultsUpdateRq: PeerTaskResultsUpdateRq): PeerTaskResultsVO {
         peerTaskResultsRepository.save(peerTaskResultsRepository.findById(id).get().apply {
-            grade = 0
             completed = peerTaskResultsUpdateRq.completed
             status = peerTaskResultsUpdateRq.status
         }).id ?: throw IllegalArgumentException("Bad id returned.")
