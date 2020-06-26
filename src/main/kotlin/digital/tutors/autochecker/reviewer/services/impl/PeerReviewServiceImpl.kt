@@ -3,6 +3,7 @@ package digital.tutors.autochecker.reviewer.services.impl
 import digital.tutors.autochecker.auth.entities.User
 import digital.tutors.autochecker.auth.repositories.UserRepository
 import digital.tutors.autochecker.auth.services.impl.UserServiceImpl
+import digital.tutors.autochecker.checker.entities.TaskResults
 import digital.tutors.autochecker.checker.repositories.TopicRepository
 import digital.tutors.autochecker.reviewer.entities.PeerReview
 import digital.tutors.autochecker.reviewer.entities.PeerTask
@@ -22,6 +23,7 @@ import digital.tutors.autochecker.reviewer.repositories.impl.PeerTaskResultsRepo
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -64,7 +66,7 @@ class PeerReviewServiceImpl : PeerReviewService {
     override fun getPeerReviewsByStudentId(studentId: String): List<PeerReviewVO> {
         val student = userRepository.findByIdOrNull(studentId)
                 ?: throw EntityNotFoundException("User with $studentId not found.")
-        return peerReviewRepository.findAllByStudentId(student).map(::toPeerReviewVO)
+        return peerReviewRepository.findAllByStudentIdOrderByCreatedDtAsc(student).map(::toPeerReviewVO)
     }
 
     @Throws(EntityNotFoundException::class)
@@ -80,6 +82,21 @@ class PeerReviewServiceImpl : PeerReviewService {
         val solution = peerTaskSolutionRepository.findByIdOrNull(solutionId)
                 ?: throw EntityNotFoundException("Solution with $solutionId not found.")
         return peerReviewRepository.findAllBySolutionId(solution).map(::toPeerReviewVO)
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getPeerReviewsByStudentIdAndTaskId(studentId: String, peerTaskId: String): List<PeerReviewVO> {
+        val student =  userRepository.findByIdOrNull(studentId) ?: throw EntityNotFoundException("User with $studentId not found")
+        val peerTask = peerTaskRepository.findByIdOrNull(peerTaskId) ?: throw EntityNotFoundException("Task with $peerTaskId not found")
+
+        val reviews = peerReviewRepository.findAllByStudentIdAndTaskIdOrderByCreatedDtAsc(student, peerTask)
+
+        val receivedReviewsArray = mutableListOf<PeerReview>()
+        receivedReviewsArray.groupBy { it.grade }.toList().forEach { (_, review) ->
+            review.sortedByDescending { it.solutionId?.id }
+            receivedReviewsArray.addAll(review)
+        }
+        return receivedReviewsArray.map(::toPeerReviewVO)
     }
 
     @Throws(EntityNotFoundException::class)
@@ -115,20 +132,9 @@ class PeerReviewServiceImpl : PeerReviewService {
             grade = peerReviewCreateRq.grade!!
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
-        val studentResult = peerTaskResultsRepository.findFirstByStudentIdAndTaskId(student, peerTask)
-        val expertResult = peerTaskResultsRepository.findFirstByStudentIdAndTaskId(expert, peerTask)
-        var gradesArray: MutableList<Double> = arrayListOf()
-
-        if (expertResult!!.postedReviews + 1 == 3 && expertResult!!.receivedReviews >= 3) {
-            val reviewsArray = peerReviewRepository.findAllByStudentIdAndTaskIdOrderByCreatedDtAsc(student, peerTask).subList(0, 3)
-
-            for ((index, review) in reviewsArray.withIndex()) {
-                gradesArray[index] = review.grade
-            }
-        }
         peerTaskResultsRepositoryImpl.run {
-            updateValueOfReceivedReviewsAndStatus(studentResult?.receivedReviews!! + 1, PeerTaskResultsStatus.NOT_CHECKING, studentResult.id!!)
-            updateValueOfPostedReviews(expertResult!!.postedReviews + 1, expertResult.id!!, gradesArray)
+            updateFields(expert, isPostedReviews = true, isReceivedReviews = false, peerTask = peerTask)
+            updateFields(student, isPostedReviews = false, isReceivedReviews = true, peerTask = peerTask)
         }
         log.debug("Created entity $id")
         return getPeerReviewByIdOrThrow(id)
@@ -149,4 +155,31 @@ class PeerReviewServiceImpl : PeerReviewService {
         return PeerReviewVO.fromData(peerReview, authorizationService.currentUserIdOrDie())
     }
 
+    @Throws(EntityNotFoundException::class)
+    override fun getPeerReviewsByUserIdAndTaskId(userId: String, peerTaskId: String, pageRequest: PageRequest): Page<PeerReviewVO> {
+        val student =  userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found")
+        val peerTask = peerTaskRepository.findByIdOrNull(peerTaskId) ?: throw EntityNotFoundException("Task with $peerTaskId not found")
+
+        val reviews = peerReviewRepository.findAllByStudentIdAndTaskIdOrderByCreatedDtDesc(student, peerTask, pageRequest)
+
+        val receivedReviewsArray = mutableListOf<PeerReview>()
+        receivedReviewsArray.groupBy { it.grade }.toList().forEach { (_, review) ->
+            review.sortedByDescending { it.solutionId?.id }
+            receivedReviewsArray.addAll(review)
+        }
+        return reviews.map(::toPeerReviewVO)
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getAllReceivedReviewsByUserId(userId: String, pageRequest: PageRequest): Page<PeerReviewVO> {
+        val student =  userRepository.findByIdOrNull(userId) ?: throw EntityNotFoundException("User with $userId not found")
+        val reviews = peerReviewRepository.findAllByStudentIdOrderByCreatedDtDesc(student, pageRequest)
+
+        val receivedReviewsArray = mutableListOf<PeerReview>()
+        receivedReviewsArray.groupBy { it.grade }.toList().forEach { (_, review) ->
+            review.sortedByDescending { it.solutionId?.id }
+            receivedReviewsArray.addAll(review)
+        }
+        return reviews.map(::toPeerReviewVO)
+    }
 }

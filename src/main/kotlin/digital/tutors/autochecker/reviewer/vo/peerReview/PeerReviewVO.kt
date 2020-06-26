@@ -12,7 +12,7 @@ data class PeerReviewVO (
         var studentId: UserVO?,
         var expertId: UserVO?,
         var solutionId: PeerTaskSolutionVO?,
-        var gradesPerCriterions: List<Int>?,
+        var gradesPerCriterions: List<Double>?,
         var argumentsPerCriterions: List<String>?,
         var summaryMessagePerSolution: String?,
         var grade: Double

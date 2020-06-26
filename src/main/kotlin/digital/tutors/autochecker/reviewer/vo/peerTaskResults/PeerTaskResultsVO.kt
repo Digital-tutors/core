@@ -13,7 +13,7 @@ data class PeerTaskResultsVO(
         var studentId: UserVO?,
         var receivedReviews: Int,
         var postedReviews: Int,
-        var grade: Int,
+        var grade: Double,
         var completed: Boolean,
         var status: PeerTaskResultsStatus
 ){

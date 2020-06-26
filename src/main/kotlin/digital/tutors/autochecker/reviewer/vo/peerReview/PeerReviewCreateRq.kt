@@ -8,7 +8,7 @@ data class PeerReviewCreateRq(
         var studentId: EntityRefRq? = null,
         var expertId: EntityRefRq? = null,
         var solutionId: EntityRefRq? = null,
-        var gradesPerCriterions: List<Int>?,
+        var gradesPerCriterions: List<Double>?,
         var argumentsPerCriterions: List<String>?,
         var summaryMessagePerSolution: String?,
         var grade: Double?

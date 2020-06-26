@@ -18,7 +18,7 @@ data class PeerTaskResults(
 
         var receivedReviews: Int = 0,
         var postedReviews: Int = 0,
-        var grade: Int = 0,
+        var grade: Double = 0.0,
         var completed: Boolean = false,
         var status: PeerTaskResultsStatus = PeerTaskResultsStatus.NOT_CHECKING
 ) : AuditableEntity()

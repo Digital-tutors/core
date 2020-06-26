@@ -21,6 +21,7 @@ import digital.tutors.autochecker.reviewer.vo.peerReview.PeerReviewVO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -50,10 +51,10 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getPeerTaskResultsByUser(userId: String): List<PeerTaskResultsVO> {
+    override fun getPeerTaskResultsByUser(userId: String, pageRequest: PageRequest): Page<PeerTaskResultsVO> {
         val user = userRepository.findByIdOrNull(userId)
                 ?: throw EntityNotFoundException("User with $userId not found.")
-        return peerTaskResultsRepository.findAllByStudentId(user).map(::toPeerTaskResultsVO)
+        return peerTaskResultsRepository.findAllByStudentId(user, pageRequest).map(::toPeerTaskResultsVO)
     }
 
     @Throws(EntityNotFoundException::class)
@@ -86,10 +87,6 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
         val id = peerTaskResultsRepository.save(PeerTaskResults().apply {
             taskId = PeerTask(id = peerTaskResultsCreateRq.taskId?.id)
             studentId = User(id = peerTaskResultsCreateRq.studentId?.id)
-            receivedReviews = 0
-            postedReviews = 0
-            grade = 0
-            completed = false
             status = PeerTaskResultsStatus.NOT_CHECKING
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 
@@ -99,7 +96,7 @@ class PeerTaskResultsServiceImpl: PeerTaskResultsService {
 
     override fun updatePeerTaskResult(id: String, peerTaskResultsUpdateRq: PeerTaskResultsUpdateRq): PeerTaskResultsVO {
         peerTaskResultsRepository.save(peerTaskResultsRepository.findById(id).get().apply {
-            completed = peerTaskResultsUpdateRq.completed
+            completed = postedReviews >=3 && receivedReviews >=3
             status = peerTaskResultsUpdateRq.status
         }).id ?: throw IllegalArgumentException("Bad id returned.")
 

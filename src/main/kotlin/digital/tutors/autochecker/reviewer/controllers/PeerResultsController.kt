@@ -35,15 +35,6 @@ class PeerResultsController: BaseController() {
         }
     }
 
-    @GetMapping("/author/{id}/decisions/peer")
-    fun getPeerTaskResultsByAuthorId(@PathVariable id: String): ResponseEntity<List<PeerTaskResultsVO>> = processServiceExceptions {
-        try {
-            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByUser(id))
-        } catch (ex: EntityNotFoundException) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results Not Found", ex)
-        }
-    }
-
     @GetMapping("/task/{task}/decisions/peer")
     fun getPeerTaskResultsByUserAndTask(@PathVariable task: String): ResponseEntity<List<PeerTaskResultsVO>> = processServiceExceptions {
         try {
@@ -53,8 +44,8 @@ class PeerResultsController: BaseController() {
         }
     }
 
-    @GetMapping("/task/{task}/decision/peer/{user}")
-    fun getPeerTaskResultByUserAndTask(@PathVariable task: String, @PathVariable user: String): ResponseEntity<PeerTaskResultsVO> = processServiceExceptions {
+    @GetMapping("/user/task/{task}/decision/peer/")
+    fun getPeerTaskResultByUserAndTask(@PathVariable task: String): ResponseEntity<PeerTaskResultsVO> = processServiceExceptions {
         try {
             ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultByPeerTaskIdAndUser(task, authorizationService.currentUserIdOrDie()))
         } catch (ex: EntityNotFoundException) {
@@ -63,9 +54,10 @@ class PeerResultsController: BaseController() {
     }
 
     @GetMapping("/user/decisions/peer")
-    fun getPeerDecisionsByUser(): ResponseEntity<List<PeerTaskResultsVO>> = processServiceExceptions {
+    fun getPeerDecisionsByUser(@RequestParam page: Int): ResponseEntity<Page<PeerTaskResultsVO>> = processServiceExceptions {
         try {
-            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByUser(authorizationService.currentUserIdOrDie()))
+            val pageRequest = PageRequest.of(page, 10);
+            ResponseEntity.ok(peerTaskResultsService.getPeerTaskResultsByUser(authorizationService.currentUserIdOrDie(), pageRequest))
         } catch (ex: EntityNotFoundException) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Results for user with topic Not Found", ex)
         }

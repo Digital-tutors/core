@@ -7,6 +7,7 @@ import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import digital.tutors.autochecker.reviewer.entities.PeerTaskResults
 import org.springframework.amqp.AmqpException
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
 interface PeerTaskResultsService {
@@ -15,7 +16,7 @@ interface PeerTaskResultsService {
     fun getPeerTaskResultsByUserAndTask(userId: String, taskId: String): List<PeerTaskResultsVO>
 
     @Throws(EntityNotFoundException::class)
-    fun getPeerTaskResultsByUser(userId: String): List<PeerTaskResultsVO>
+    fun getPeerTaskResultsByUser(userId: String, pageRequest: PageRequest): Page<PeerTaskResultsVO>
 
     @Throws(EntityNotFoundException::class)
     fun getPeerTaskResultsByTaskId(taskId: String): List<PeerTaskResultsVO>
