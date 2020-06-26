@@ -19,9 +19,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TaskResultsServiceImpl : TaskResultsService {
@@ -51,13 +54,13 @@ class TaskResultsServiceImpl : TaskResultsService {
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTaskResultsByUserAndTask(userId: String, taskId: String): List<TaskResultsVO> {
+    override fun getTaskResultsByUserAndTask(userId: String, taskId: String, pageRequest: PageRequest): Page<TaskResultsVO> {
         val user = userRepository.findByIdOrNull(userId)
                 ?: throw EntityNotFoundException("User with $userId not found.")
         val task = taskRepository.findByIdOrNull(taskId)
                 ?: throw EntityNotFoundException("Task with $taskId not found.")
 
-        val taskResults = taskResultsRepository.findAllByUserIdAndTaskIdOrderByCreatedDtDesc(user, task)
+        val taskResults = taskResultsRepository.findAllByUserIdAndTaskIdOrderByCreatedDtDesc(user, task, pageRequest)
 
         val taskResultsArray = mutableListOf<TaskResults>()
         taskResults.groupBy { it.language }.toList().forEach { (_, taskResult) ->
@@ -65,14 +68,14 @@ class TaskResultsServiceImpl : TaskResultsService {
             taskResultsArray.addAll(taskResult)
         }
 
-        return taskResultsArray.map(::toTaskResultsVO)
+        return taskResults.map(::toTaskResultsVO)
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getTaskResultsByUser(userId: String): List<TaskResultsVO> {
+    override fun getTaskResultsByUser(userId: String, pageRequest: PageRequest): Page<TaskResultsVO> {
         val user = userRepository.findByIdOrNull(userId)
                 ?: throw EntityNotFoundException("User with $userId not found.")
-        val taskResults = taskResultsRepository.findAllByUserIdOrderByCreatedDtDesc(user)
+        val taskResults = taskResultsRepository.findAllByUserIdOrderByCreatedDtDesc(user, pageRequest)
 
         val taskResultsArray = mutableListOf<TaskResults>()
         taskResults.groupBy { it.language }.toList().forEach { (_, taskResult) ->
@@ -80,7 +83,7 @@ class TaskResultsServiceImpl : TaskResultsService {
             taskResultsArray.addAll(taskResult)
         }
 
-        return taskResultsArray.map(::toTaskResultsVO)
+        return taskResults.map(::toTaskResultsVO)
     }
 
     @Throws(EntityNotFoundException::class)

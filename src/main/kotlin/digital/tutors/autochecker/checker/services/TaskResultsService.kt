@@ -5,6 +5,7 @@ import digital.tutors.autochecker.checker.vo.taskResults.TaskResultsVO
 import digital.tutors.autochecker.core.exception.EntityNotFoundException
 import org.springframework.amqp.AmqpException
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
 interface TaskResultsService {
@@ -13,10 +14,10 @@ interface TaskResultsService {
     fun getTaskResultsByAuthorId(authorId: String): List<TaskResultsVO>
 
     @Throws(EntityNotFoundException::class)
-    fun getTaskResultsByUserAndTask(userId: String, taskId: String): List<TaskResultsVO>
+    fun getTaskResultsByUserAndTask(userId: String, taskId: String, pageRequest: PageRequest): Page<TaskResultsVO>
 
     @Throws(EntityNotFoundException::class)
-    fun getTaskResultsByUser(userId: String): List<TaskResultsVO>
+    fun getTaskResultsByUser(userId: String, pageRequest: PageRequest): Page<TaskResultsVO>
 
     @Throws(EntityNotFoundException::class)
     fun getTaskResultsByTaskId(taskId: String): List<TaskResultsVO>
