@@ -14,10 +14,11 @@ import javax.validation.constraints.Size
 data class User(
         @Id var id: String? = null,
 
+
         @get:Email
         var email: String? = null,
 
-        @get:Size(min = 6)
+        @get:Size(min = 8, max = 180)
         var password: String? = null,
 
         @get:Size(min = 1, max = 20)

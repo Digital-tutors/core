@@ -19,6 +19,8 @@ interface UserService {
 
     fun loginUser(user: UserLoginRq): UserVO
 
+    fun existsByEmail(email: String): Boolean
+
 //    @Throws(EntityNotFoundException::class)
 //    fun updateUser(id: String, page: PageUpdateRq): PageVO
 

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import javax.validation.Valid
 
 @RestController
 @RequestMapping
@@ -35,7 +36,10 @@ class UserController : BaseController() {
     }
 
     @PostMapping("/sign-up")
-    fun signUp(@RequestBody userCreateRq: UserCreateRq): ResponseEntity<UserVO> = processServiceExceptions {
+    fun signUp(@Valid @RequestBody userCreateRq: UserCreateRq): ResponseEntity<UserVO> = processServiceExceptions {
+        if (userService.existsByEmail(userCreateRq.email))
+            throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "User with email address: "+ userCreateRq.email + " already exist")
         ResponseEntity.ok(userService.createUser(userCreateRq))
     }
 
